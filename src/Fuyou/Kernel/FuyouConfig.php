@@ -2,20 +2,17 @@
 /**
  * Created by PhpStorm.
  * User: lixingbo
- * Date: 2018/9/30
- * Time: 下午6:14
+ * Date: 2019/1/21
+ * Time: 下午9:22
  */
 
-namespace Ddup\Payments\Wechat\Support;
+namespace Ddup\Payments\Fuyou\Kernel;
+
 
 use Ddup\Part\Struct\StructReadable;
 
-
-class WechatConfig extends StructReadable
+class FuyouConfig extends StructReadable
 {
-    const MODE_NORMAL  = 'normal'; // 普通模式
-    const MODE_DEV     = 'dev'; // 沙箱模式
-    const MODE_SERVICE = 'service'; // 服务商
 
     public $ssl_verify = false;
     public $mode;

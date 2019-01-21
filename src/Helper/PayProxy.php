@@ -3,17 +3,18 @@
 namespace Ddup\Payments\Helper;
 
 use Ddup\Part\Libs\Obj;
-use Ddup\Payments\Contracts\PaymentApplicationInterface;
+use Ddup\Payments\Config\PaymentNotifyStruct;
+use Ddup\Payments\Contracts\PaymentInterface;
 use Illuminate\Support\Collection;
 
-class PayProxy implements PaymentApplicationInterface
+class PayProxy implements PaymentInterface
 {
 
     private $paymentApplication;
 
     private $name;
 
-    public function __construct(PaymentApplicationInterface $paymentApplication)
+    public function __construct(PaymentInterface $paymentApplication)
     {
         $this->paymentApplication = $paymentApplication;
 
@@ -83,16 +84,16 @@ class PayProxy implements PaymentApplicationInterface
         return $result;
     }
 
-    public function callbackConversion($data):Collection
+    public function callbackConversion($data):PaymentNotifyStruct
     {
         $name = $this->action(__FUNCTION__);
 
-        $data = $this->paymentApplication->callbackConversion($data);
+        $result = $this->paymentApplication->callbackConversion($data);
 
-        $result = new Collection($data);
+        $result = new Collection($result->toArray());
 
         MoneyFilter::after($name, $result);
 
-        return $result;
+        return new PaymentNotifyStruct($result);
     }
 }

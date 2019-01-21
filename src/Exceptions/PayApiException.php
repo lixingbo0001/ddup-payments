@@ -1,6 +1,9 @@
 <?php
 
-namespace Ddup\Payments\Helper\Exceptions;
+namespace Ddup\Payments\Exceptions;
+
+
+use Ddup\Part\Exception\ExceptionCustomCodeAble;
 
 class PayApiException extends ExceptionCustomCodeAble
 {
@@ -10,6 +13,7 @@ class PayApiException extends ExceptionCustomCodeAble
     const data_convert_fail        = 'data_convert_fail';
     const pay_api_invalid_sign     = 'pay_api_invalid_sign';
     const pay_gateway_undefind     = 'pay_gateway_undefind';
+    const api_error                = 'api_error';
 
 
     public function __construct(string $message = "", string $code = "", array $row = [])

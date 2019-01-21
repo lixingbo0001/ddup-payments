@@ -6,7 +6,7 @@
  * Time: 下午6:14
  */
 
-namespace Ddup\Payments\Wechat\Support;
+namespace Ddup\Payments\Wechat\Kernel;
 
 use Ddup\Part\Struct\StructReadable;
 use Ddup\Part\Struct\TransformAble;

@@ -1,29 +1,45 @@
 <?php
 
-namespace Ddup\Payments\Wechat\Support;
+namespace Ddup\Payments\Wechat\Kernel;
 
 
-use Ddup\Part\Request\HasHttpRequest;
-use Ddup\Payments\Helper\Exceptions\PayApiException;
+use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Helper\Exceptions\PayPaymentException;
 use Illuminate\Support\Collection;
 
 class Support
 {
-    use HasHttpRequest;
 
-    private        $config;
-    private static $instance;
+    static private $js_api_sign_string;
 
-    public function __construct(WechatConfig $config)
+    public static function jsApiSign($js_api_param, $key)
     {
-        $this->config = $config;
+        ksort($js_api_param);
+
+        $js_api_param['key'] = $key;
+
+        $tmp = [];
+
+        foreach ($js_api_param as $k => $v) {
+            $tmp[] = "{$k}={$v}";
+        }
+
+        $sign_string = join('&', $tmp);
+
+        self::$js_api_sign_string = $sign_string;
+
+        return strtoupper(md5($sign_string));
     }
 
-    public function getBaseUri()
+    public static function jsApiSignString()
     {
-        switch ($this->config->mode) {
-            case $this->config::MODE_DEV:
+        return self::$js_api_sign_string;
+    }
+
+    public static function getBaseUri(WechatConfig $config)
+    {
+        switch ($config->mode) {
+            case $config::MODE_DEV:
                 return 'https://api.mch.weixin.qq.com/sandboxnew/';
                 break;
             default:
@@ -32,68 +48,12 @@ class Support
         }
     }
 
-    function getTimeout()
-    {
-        return 8;
-    }
-
-    public function requestParams()
-    {
-        return [];
-    }
-
-    function requestOptions()
-    {
-        return [
-            'verify' => false
-        ];
-    }
-
-    public static function getInstance(WechatConfig $config)
-    {
-        if (!(self::$instance instanceof self)) {
-            self::$instance = new self($config);
-        }
-
-        return self::$instance;
-    }
-
-    public static function requestApi($endpoint, $data, WechatConfig $config):Collection
-    {
-        $ret = self::sendRequest($endpoint, $data, $config);
-
-        $result_arr = self::fromXml($ret);
-
-        $result = new Collection($result_arr);
-
-        self::checkSuccess($result);
-
-        self::checkSign($endpoint, $result, $config->key);
-
-        return $result;
-    }
-
-    private static function sendRequest($endpoint, $data, WechatConfig $config)
-    {
-        $options = [];
-
-        $xml = self::toXml($data);
-
-        self::cert($options, $config);
-
-        return self::getInstance($config)->post(
-            $endpoint,
-            $xml,
-            $options
-        );
-    }
-
     private static function needCert(WechatConfig $config)
     {
         return $config->ssl_verify;
     }
 
-    private static function cert(&$options, WechatConfig $config)
+    static function cert(&$options, WechatConfig $config)
     {
         if (!self::needCert($config)) {
             return;
@@ -104,7 +64,7 @@ class Support
         $options['verify']  = $config->rootca;
     }
 
-    private static function checkSign($endpoint, Collection $result, $key)
+    static function checkSign($endpoint, Collection $result, $key)
     {
         if (strpos($endpoint, 'mmpaymkttransfers') !== false || self::generateSign($result->all(), $key) === $result->get('sign')) {
             return;
@@ -113,7 +73,7 @@ class Support
         throw new \Exception('Wechat Sign Verify FAILED', 3);
     }
 
-    private static function checkSuccess(Collection $result)
+    static function checkSuccess(Collection $result)
     {
         if (self::isSuccess($result)) {
             return;

@@ -3,10 +3,10 @@
 namespace Ddup\Payments\Wechat;
 
 use Ddup\Part\Libs\Str;
-use Ddup\Payments\Wechat\Support\Pay;
+use Ddup\Payments\Wechat\Kernel\Pay;
+use Ddup\Payments\Wechat\Kernel\Support;
 use Illuminate\Support\Collection;
 use Ddup\Payments\Contracts\PayableInterface;
-use Ddup\Payments\Wechat\Support\JsApi;
 
 class JsApiPayment extends Pay implements PayableInterface
 {
@@ -29,9 +29,7 @@ class JsApiPayment extends Pay implements PayableInterface
             'signType'  => 'MD5'
         ];
 
-        $jsApi = new JsApi();
-
-        $js_api_param['paySign'] = $jsApi->sign($js_api_param, $this->config->key);
+        $js_api_param['paySign'] = Support::jsApiSign($js_api_param, $this->config->key);
 
         return new Collection(compact('prepay_id', 'js_api_param'));
     }

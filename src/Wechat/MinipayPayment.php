@@ -3,10 +3,10 @@
 namespace Ddup\Payments\Wechat;
 
 use Ddup\Part\Libs\Str;
-use Ddup\Payments\Wechat\Support\Pay;
+use Ddup\Payments\Wechat\Kernel\Pay;
 use Illuminate\Support\Collection;
 use Ddup\Payments\Contracts\PayableInterface;
-use Ddup\Payments\Wechat\Support\JsApi;
+use Ddup\Payments\Wechat\Kernel\JsApi;
 
 
 class MinipayPayment extends Pay implements PayableInterface

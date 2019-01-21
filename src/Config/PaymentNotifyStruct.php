@@ -17,8 +17,12 @@ class PaymentNotifyStruct extends StructReadable
     const refund  = 'REFUND';
     const cacel   = 'CANCEL';
     const fail    = 'FAIL';
+    const pending = 'PENDING';
 
     public $status;
+    public $status_msg;
+    public $total_amount;
     public $amount;
     public $transaction_id;
+    public $wx_appid;
 }

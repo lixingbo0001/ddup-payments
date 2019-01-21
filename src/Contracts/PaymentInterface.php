@@ -5,7 +5,7 @@ namespace Ddup\Payments\Contracts;
 use Ddup\Payments\Config\PaymentNotifyStruct;
 use Illuminate\Support\Collection;
 
-interface PaymentApplicationInterface
+interface PaymentInterface
 {
     public function pay($name, Collection $params):Collection;
 

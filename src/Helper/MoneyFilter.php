@@ -9,9 +9,18 @@ use Illuminate\Support\Collection;
 class MoneyFilter
 {
 
+    private static $tranform_config = [];
+
+    static function init($config)
+    {
+        self::$tranform_config = $config;
+    }
+
     private static function keys($name, $before = true)
     {
-        return config('payment.money_transfrom.' . $name . '.' . ($before ? 0 : 1), []);
+        if (!isset(self::$tranform_config[$name])) return [];
+
+        return array_get(self::$tranform_config, ($before ? 0 : 1));
     }
 
     private static function filter(Collection &$params, $name, $before = true)
@@ -36,7 +45,6 @@ class MoneyFilter
     static function after($name, Collection &$params)
     {
         self::filter($params, $name, false);
-
     }
 
 }

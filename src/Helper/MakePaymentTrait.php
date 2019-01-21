@@ -2,13 +2,13 @@
 
 use Illuminate\Support\Str;
 use Ddup\Payments\Contracts\PayableInterface;
-use Ddup\Payments\Helper\Exceptions\PayApiException;
+use Ddup\Payments\Exceptions\PayApiException;
 
 
 Trait MakePaymentTrait
 {
 
-    protected function makePay($preFix, $name, $config):PayableInterface
+    protected function makePay($preFix, $name, Application $app, $config):PayableInterface
     {
 
         $class = $preFix . '\\' . Str::studly($name) . 'Payment';
@@ -17,7 +17,7 @@ Trait MakePaymentTrait
             throw new PayApiException("Pay Gateway [{$class}] Not Exists", PayApiException::pay_method_undefind);
         }
 
-        $app = new $class($config);
+        $app = new $class($app, $config);
 
         if ($app instanceof PayableInterface) {
             return $app;

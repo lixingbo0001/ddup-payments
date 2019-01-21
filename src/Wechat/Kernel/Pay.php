@@ -1,10 +1,11 @@
 <?php
 
-namespace Ddup\Payments\Wechat\Support;
+namespace Ddup\Payments\Wechat\Kernel;
 
 
 use Ddup\Part\Libs\Time;
 use Ddup\Payments\Contracts\PayableInterface;
+use Ddup\Payments\Helper\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -12,10 +13,12 @@ abstract class Pay implements PayableInterface
 {
 
     protected $config;
+    private   $client;
 
-    public function __construct(WechatConfig $config)
+    public function __construct(Application $app, WechatConfig $config)
     {
         $this->config = $config;
+        $this->client = new WechatClient($app, $config);
     }
 
     private function setCommonParam(Array $payload, Collection $params)
@@ -40,7 +43,7 @@ abstract class Pay implements PayableInterface
         $payload = $this->preOrder($payload, $params);
         $payload = $this->setCommonParam($payload, $params);
 
-        $result = Support::requestApi($this->endPoint(), $payload, $this->config);
+        $result = $this->client->requestApi($this->endPoint(), $payload);
 
         return $this->after($result);
     }
