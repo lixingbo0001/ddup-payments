@@ -1,0 +1,30 @@
+{
+  "name": "ddup/payments",
+  "description": "wechat alipay upay fypay",
+  "type": "library",
+  "keywords": [
+    "ddup",
+    "payment",
+    "支付",
+    "聚合支付"
+  ],
+  "require": {
+    "ddup/part": "^1.2",
+    "illuminate/http": "^5.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ddup\\Payments\\": "src",
+      "Ddup\\Payments\\Test\\": "test"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  },
+  "authors": [
+    {
+      "name": "xingbo.li",
+      "email": "1711293058@qq.com"
+    }
+  ]
+}
