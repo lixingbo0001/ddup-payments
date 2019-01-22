@@ -13,16 +13,18 @@ use Ddup\Part\Struct\StructReadable;
 
 class FuyouConfig extends StructReadable
 {
+    const MODE_TEST = 'test';
+    const MODE_PROD = 'prod';
 
-    public $ssl_verify = false;
+
+    public $ssl_verify    = false;
     public $mode;
-    public $key;
-    public $ssl_cert;
-    public $cert_key;
-    public $rootca;
+    public $pem_key;
     public $app_id;
     public $mch_id;
     public $notify_url;
+    public $expire_minute = 5;
     public $sub_mch_id;
     public $sub_app_id;
+    public $version       = '1.0';
 }

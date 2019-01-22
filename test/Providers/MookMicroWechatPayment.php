@@ -4,9 +4,9 @@ namespace Ddup\Payments\Test\Providers;
 
 
 use Ddup\Payments\Contracts\PayableInterface;
-use Ddup\Payments\Upay\Kernel\Pay;
+use Ddup\Payments\Upay\Kernel\UpayPay;
 
-class MookMicroWechatPayment extends Pay implements PayableInterface
+class MookMicroWechatPayment extends UpayPay implements PayableInterface
 {
 
 

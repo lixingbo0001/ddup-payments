@@ -3,24 +3,19 @@
 namespace Ddup\Payments\Upay;
 
 
+use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Contracts\PayableInterface;
-use Ddup\Payments\Upay\Kernel\Pay;
+use Ddup\Payments\Upay\Kernel\UpayPay;
+use Illuminate\Support\Collection;
 
-class MicroAlipayPayment extends Pay implements PayableInterface
+class MicroAlipayPayment extends UpayPay implements PayableInterface
 {
-
-
-    public function getChannel()
+    function pay(array $payload, PayOrderStruct $order):Collection
     {
-        return 'umszj.channel.alipay';
+        return parent::payRequest($payload, $order);
     }
 
-    public function getTradeType()
-    {
-        return 'umszj.trade.pay';
-    }
-
-    public function prePay(Array $params)
+    function bizContent(array $params)
     {
         $bizContent = [
             'ext_no'       => $params['order_no'],
@@ -31,5 +26,15 @@ class MicroAlipayPayment extends Pay implements PayableInterface
         ];
 
         return $bizContent;
+    }
+
+    public function getChannel()
+    {
+        return 'umszj.channel.alipay';
+    }
+
+    public function getTradeType()
+    {
+        return 'umszj.trade.pay';
     }
 }

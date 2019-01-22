@@ -16,7 +16,7 @@ class PayApiException extends ExceptionCustomCodeAble
     const api_error                = 'api_error';
 
 
-    public function __construct(string $message = "", string $code = "", array $row = [])
+    public function __construct(string $message = "", string $code = "", $row = [])
     {
         parent::__construct($message, $code, $row);
     }

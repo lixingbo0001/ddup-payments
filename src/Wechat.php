@@ -4,6 +4,7 @@ namespace Ddup\Payments;
 
 use Ddup\Part\Libs\Str;
 use Ddup\Payments\Config\PaymentNotifyStruct;
+use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Helper\Application;
@@ -67,9 +68,9 @@ class Wechat implements PaymentInterface
         return new Collection();
     }
 
-    public function pay($name, Collection $params):Collection
+    public function pay($name, PayOrderStruct $order):Collection
     {
-        return $this->makePay(__CLASS__, $name, $this->app, $this->config)->pay($this->payload(), $params);
+        return $this->makePay(__CLASS__, $name, $this->app, $this->config)->pay($this->payload(), $order);
     }
 
     public function refund($name, Collection $order):Collection

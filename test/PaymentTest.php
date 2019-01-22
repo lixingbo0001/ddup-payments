@@ -1,9 +1,8 @@
 <?php namespace Tests\Pay;
 
-use Ddup\Part\Libs\OutCli;
+use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Helper\Application;
 use Ddup\Payments\Test\TestCase;
-use Illuminate\Support\Collection;
 
 
 class PaymentTest extends TestCase
@@ -13,7 +12,7 @@ class PaymentTest extends TestCase
     {
 
         try {
-            $param = new Collection(["total_fee" => 0.01, 'order_no' => 'tewtadassdfk2233223']);
+            $param = new PayOrderStruct(["total_fee" => 0.01, 'order_no' => 'tewtadassdfk2233223']);
             $obj   = Application::payment('wechat', ['key' => 'test_key'])->pay('micro', $param);
         } catch (\Exception $exception) {
 
@@ -36,7 +35,7 @@ class PaymentTest extends TestCase
                     'terminal_id' => '11324800'
 
                 ]
-            )->pay('microWechat', new Collection($param));
+            )->pay('microWechat', new PayOrderStruct($param));
         } catch (\Exception $exception) {
             $this->assertEquals('Upay API Error:授权码异常', $exception->getMessage());
         }
@@ -54,7 +53,7 @@ class PaymentTest extends TestCase
                     'merchant_id' => '898331189990591',
                     'terminal_id' => '11324800'
                 ]
-            )->pay('microWechat', new Collection($param));
+            )->pay('jsAli', new PayOrderStruct($param));
         } catch (\Exception $exception) {
             $this->assertEquals('fuyou API Error:授权码异常', $exception->getMessage());
         }

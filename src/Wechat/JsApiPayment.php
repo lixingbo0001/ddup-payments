@@ -3,22 +3,18 @@
 namespace Ddup\Payments\Wechat;
 
 use Ddup\Part\Libs\Str;
-use Ddup\Payments\Wechat\Kernel\Pay;
+use Ddup\Payments\Config\PayOrderStruct;
+use Ddup\Payments\Wechat\Kernel\WechatPay;
 use Ddup\Payments\Wechat\Kernel\Support;
 use Illuminate\Support\Collection;
 use Ddup\Payments\Contracts\PayableInterface;
 
-class JsApiPayment extends Pay implements PayableInterface
+class JsApiPayment extends WechatPay implements PayableInterface
 {
-
-
-    function preOrder(Array $payload, Collection $params)
+    function pay(array $payload, PayOrderStruct $order):Collection
     {
-        return $payload;
-    }
+        $result = parent::payRequest($payload, $order);
 
-    function after(Collection $result):Collection
-    {
         $prepay_id = $result->get('prepay_id');
 
         $js_api_param = [

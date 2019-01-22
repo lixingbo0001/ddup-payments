@@ -3,6 +3,9 @@
 namespace Ddup\Payments\Upay\Kernel;
 
 
+use Ddup\Part\Api\ApiResultInterface;
+use Ddup\Part\Api\ApiResulTrait;
+use Ddup\Part\Libs\Helper;
 use Ddup\Part\Request\HasHttpRequest;
 use Ddup\Payments\Exceptions\PayApiException;
 use GuzzleHttp\MessageFormatter;
@@ -12,7 +15,7 @@ use Ddup\Payments\Helper\Application;
 
 class UpayClient
 {
-    use HasHttpRequest;
+    use HasHttpRequest, ApiResulTrait;
 
     private $config;
     private $app;
@@ -25,6 +28,11 @@ class UpayClient
         $this->timeout = 20;
 
         $this->loggerMiddleware();
+    }
+
+    public function newResult($ret):ApiResultInterface
+    {
+        return new UpayApiResult($ret);
     }
 
     private function loggerMiddleware()
@@ -51,26 +59,15 @@ class UpayClient
 
     public function requestApi($endpoint, $data):Collection
     {
-        $ret    = $this->post($endpoint, $data);
-        $result = json_decode($ret, true);
+        $ret = $this->post($endpoint, $data);
 
-        if (json_last_error() != JSON_ERROR_NONE) {
-            throw new PayApiException('Upay API Error:' . $ret, PayApiException::api_error, $result);
+        $this->parseResult($ret);
+
+        if (!$this->result->isSuccess()) {
+            throw new PayApiException('银联通道报错：' . $this->result->getMsg(), PayApiException::api_error, Helper::toArray($ret));
         }
 
-        if (!isset($result['code'])) {
-            throw new PayApiException('Upay API Error:网络异常', PayApiException::api_error, $result);
-        }
-
-        if ($result['code'] != 100) {
-            throw new PayApiException('Upay API Error:' . $result['message'], PayApiException::api_message, $result);
-        }
-
-        if ($result['sub_code'] != 100) {
-            throw new PayApiException('Upay API Submessage:' . $result['sub_message'], PayApiException::api_message, $result);
-        }
-
-        return new Collection($result);
+        return $this->result->getData();
     }
 
 

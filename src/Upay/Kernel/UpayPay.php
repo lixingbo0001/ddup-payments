@@ -3,12 +3,13 @@
 namespace Ddup\Payments\Upay\Kernel;
 
 use Ddup\Part\Libs\Arr;
+use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Contracts\PayableInterface;
 use Ddup\Payments\Helper\Application;
 use Illuminate\Support\Collection;
 
 
-abstract class Pay implements PayableInterface
+abstract class UpayPay implements PayableInterface
 {
 
     protected $config;
@@ -20,17 +21,17 @@ abstract class Pay implements PayableInterface
         $this->client = new UpayClient($app, $config);
     }
 
-    abstract function prePay(Array $params);
-
-    public function refund(Collection $order)
+    public function endPoint()
     {
+        return '';
     }
 
-    public function pay(Array $payload, Collection $params):Collection
+    abstract function bizContent(array $params);
+
+    public function payRequest(array $payload, PayOrderStruct $order):Collection
     {
-        $params     = $params->merge($payload);
-        $params     = $params->toArray();
-        $bizContent = $this->prePay($params);
+        $params     = array_merge($payload, $order->toArray());
+        $bizContent = $this->bizContent($params);
         $params     = Arr::getIfExists($params, $this->getCommonFields());
 
         $params['biz_content'] = json_encode($bizContent, JSON_UNESCAPED_UNICODE);
@@ -39,7 +40,7 @@ abstract class Pay implements PayableInterface
 
         $params['sign'] = Support::generateSign($params, $this->config->key);
 
-        $result = $this->client->requestApi('', $params);
+        $result = $this->client->requestApi($this->endPoint(), $params);
 
         $bzContent = json_decode($result->get('biz_content'), true);
         $bzContent = new Collection($bzContent);
@@ -54,11 +55,7 @@ abstract class Pay implements PayableInterface
             'qr_code'        => $bzContent->get('qr_code')
         ];
 
-        return $this->after(new Collection($return));
-    }
-
-    public function verify(Collection $params)
-    {
+        return new Collection($return);
     }
 
     protected function getCommonFields()
@@ -81,11 +78,6 @@ abstract class Pay implements PayableInterface
             'sign_type',
             'sign_format'
         ];
-    }
-
-    function after(Collection $result):Collection
-    {
-        return $result;
     }
 
 

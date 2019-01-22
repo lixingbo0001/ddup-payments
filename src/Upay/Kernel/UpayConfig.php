@@ -26,5 +26,5 @@ class UpayConfig extends StructReadable
     public $terminal_id;
     public $merchant_id;
     public $notify_url;
-    public $version    = '1';
+    public $version    = '2.0.0';
 }

@@ -2,17 +2,16 @@
 
 namespace Ddup\Payments\Wechat;
 
+use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Contracts\PayableInterface;
-use Ddup\Payments\Wechat\Kernel\Pay;
-use Illuminate\Http\Request;
+use Ddup\Payments\Wechat\Kernel\WechatPay;
 use Illuminate\Support\Collection;
 
-class MicroPayment extends Pay implements PayableInterface
+class MicroPayment extends WechatPay implements PayableInterface
 {
-    function preOrder(Array $payload, Collection $params)
+    function pay(array $payload, PayOrderStruct $order):Collection
     {
-        $payload['spbill_create_ip'] = Request::createFromGlobals()->server->get('SERVER_ADDR');
-        return $payload;
+        return parent::payRequest($payload, $order);
     }
 
     function getTradeType()

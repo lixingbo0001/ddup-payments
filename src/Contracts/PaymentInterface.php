@@ -3,11 +3,12 @@
 namespace Ddup\Payments\Contracts;
 
 use Ddup\Payments\Config\PaymentNotifyStruct;
+use Ddup\Payments\Config\PayOrderStruct;
 use Illuminate\Support\Collection;
 
 interface PaymentInterface
 {
-    public function pay($name, Collection $params):Collection;
+    public function pay($name, PayOrderStruct $order):Collection;
 
     public function find($name, Collection $order):Collection;
 

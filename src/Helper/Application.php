@@ -3,9 +3,8 @@
 
 use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
+use Ddup\Payments\Providers\ChannelProvider;
 use Ddup\Payments\Providers\LogProvider;
-use Ddup\Payments\Providers\UpayProvider;
-use Ddup\Payments\Providers\WechatProvider;
 use Pimple\Container;
 use Psr\Log\LoggerInterface;
 
@@ -15,6 +14,7 @@ use Psr\Log\LoggerInterface;
  * @property LoggerInterface $logger;
  * @property PaymentInterface wechat;
  * @property PaymentInterface upay;
+ * @property PaymentInterface fuyou;
  * @package Ddup\Payments\Helper
  */
 class Application extends Container
@@ -48,8 +48,7 @@ class Application extends Container
     {
         return [
             LogProvider::class,
-            WechatProvider::class,
-            UpayProvider::class
+            ChannelProvider::class
         ];
     }
 

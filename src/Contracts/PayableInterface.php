@@ -2,15 +2,17 @@
 
 namespace Ddup\Payments\Contracts;
 
+use Ddup\Payments\Config\PayOrderStruct;
 use Illuminate\Support\Collection;
 
 interface PayableInterface
 {
-    public function pay(Array $payload, Collection $params): Collection;
+    function pay(array $payload, PayOrderStruct $order):Collection;
 
     function getChannel();
 
-    function getTradeType();
+    function endPoint();
 
+    function getTradeType();
 }
 

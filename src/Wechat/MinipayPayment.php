@@ -3,23 +3,19 @@
 namespace Ddup\Payments\Wechat;
 
 use Ddup\Part\Libs\Str;
-use Ddup\Payments\Wechat\Kernel\Pay;
+use Ddup\Payments\Config\PayOrderStruct;
+use Ddup\Payments\Wechat\Kernel\Support;
+use Ddup\Payments\Wechat\Kernel\WechatPay;
 use Illuminate\Support\Collection;
 use Ddup\Payments\Contracts\PayableInterface;
-use Ddup\Payments\Wechat\Kernel\JsApi;
 
 
-class MinipayPayment extends Pay implements PayableInterface
+class MinipayPayment extends WechatPay implements PayableInterface
 {
-
-
-    function preOrder(Array $payload, Collection $params)
+    function pay(array $payload, PayOrderStruct $order):Collection
     {
-        return $payload;
-    }
+        $result = parent::payRequest($payload, $order);
 
-    function after(Collection $result):Collection
-    {
         $prepay_id = $result->get('prepay_id');
 
         $js_api_param = [
@@ -30,9 +26,7 @@ class MinipayPayment extends Pay implements PayableInterface
             'signType'  => 'MD5'
         ];
 
-        $jsApi = new JsApi();
-
-        $js_api_param['paySign'] = $jsApi->sign($js_api_param, $this->config->key);
+        $js_api_param['paySign'] = Support::jsApiSign($js_api_param, $this->config->key);
 
         return new Collection(compact('prepay_id', 'js_api_param'));
     }

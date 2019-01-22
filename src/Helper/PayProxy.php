@@ -4,6 +4,7 @@ namespace Ddup\Payments\Helper;
 
 use Ddup\Part\Libs\Obj;
 use Ddup\Payments\Config\PaymentNotifyStruct;
+use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Illuminate\Support\Collection;
 
@@ -46,13 +47,13 @@ class PayProxy implements PaymentInterface
         return $this->paymentApplication->find($name, $order);
     }
 
-    public function pay($gateway, Collection $params):Collection
+    public function pay($gateway, PayOrderStruct $order):Collection
     {
         $name = $this->action(__FUNCTION__);
 
-        MoneyFilter::before($name, $params);
+        MoneyFilter::before($name, $order);
 
-        $result = $this->paymentApplication->pay($gateway, $params);
+        $result = $this->paymentApplication->pay($gateway, $order);
 
         MoneyFilter::after($name, $result);
 

@@ -3,6 +3,7 @@
 namespace Ddup\Payments;
 
 use Ddup\Payments\Config\PaymentNotifyStruct;
+use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Helper\MakePaymentTrait;
@@ -95,10 +96,11 @@ class Upay implements PaymentInterface
         return new Collection($result);
     }
 
-    public function pay($name, Collection $params):Collection
+    public function pay($name, PayOrderStruct $order):Collection
     {
-        return $this->getHandle($name)->pay($this->payload(), $params);
+        return $this->getHandle($name)->pay($this->payload(), $order);
     }
+
 
     public function refund($name, Collection $order):Collection
     {
