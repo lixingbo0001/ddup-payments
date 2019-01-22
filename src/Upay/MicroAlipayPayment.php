@@ -15,19 +15,6 @@ class MicroAlipayPayment extends UpayPay implements PayableInterface
         return parent::payRequest($payload, $order);
     }
 
-    function bizContent(array $params)
-    {
-        $bizContent = [
-            'ext_no'       => $params['order_no'],
-            'auth_code'    => $params['auth_code'],
-            'subject'      => $params['subject'],
-            'total_amount' => $params['amount'],
-            'currency'     => 'CNY',
-        ];
-
-        return $bizContent;
-    }
-
     public function getChannel()
     {
         return 'umszj.channel.alipay';
@@ -36,5 +23,16 @@ class MicroAlipayPayment extends UpayPay implements PayableInterface
     public function getTradeType()
     {
         return 'umszj.trade.pay';
+    }
+
+    function bizContent(PayOrderStruct $params)
+    {
+        return [
+            'ext_no'       => $params->order_no,
+            'auth_code'    => $params->auth_code,
+            'subject'      => $params->subject,
+            'total_amount' => $params->amount,
+            'currency'     => 'CNY',
+        ];
     }
 }

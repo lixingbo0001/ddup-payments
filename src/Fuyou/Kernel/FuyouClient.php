@@ -27,6 +27,8 @@ class FuyouClient
     {
         $this->app    = $app;
         $this->config = $config;
+
+        $app->registerRequestMiddelware($this);
     }
 
     public function newResult($ret):ApiResultInterface
@@ -36,7 +38,7 @@ class FuyouClient
 
     public function getBaseUri()
     {
-        // TODO: Implement getBaseUri() method.
+        return Support::getBaseUri($this->config);
     }
 
     public function requestParams()

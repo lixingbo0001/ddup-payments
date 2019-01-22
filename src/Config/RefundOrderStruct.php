@@ -11,12 +11,9 @@ namespace Ddup\Payments\Config;
 use Ddup\Part\Struct\StructReadable;
 
 
-class PayOrderStruct extends StructReadable
+class RefundOrderStruct extends StructReadable
 {
     public $amount;
     public $order_no;
-    public $subject;
-    public $openid;
-    public $expired_at;
-    public $auth_code;
+    public $refund_order_no;
 }

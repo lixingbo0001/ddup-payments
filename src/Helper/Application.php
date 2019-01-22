@@ -5,6 +5,8 @@ use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Providers\ChannelProvider;
 use Ddup\Payments\Providers\LogProvider;
+use GuzzleHttp\MessageFormatter;
+use GuzzleHttp\Middleware;
 use Pimple\Container;
 use Psr\Log\LoggerInterface;
 
@@ -25,6 +27,13 @@ class Application extends Container
         parent::__construct($values);
 
         $this->registerProvidrs($this->providers());
+    }
+
+    public function registerRequestMiddelware($client)
+    {
+        $fomater = new MessageFormatter('{url} {method} {req_body} 返回： {res_body}');
+
+        $client->pushMiddleware(Middleware::log($this->logger, $fomater), 'log');
     }
 
     public function __set($id, $value)

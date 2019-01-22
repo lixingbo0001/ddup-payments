@@ -4,7 +4,7 @@ namespace Ddup\Payments\Wechat\Kernel;
 
 
 use Ddup\Payments\Exceptions\PayApiException;
-use Ddup\Payments\Helper\Exceptions\PayPaymentException;
+use Ddup\Payments\Exceptions\PayPaymentException;
 use Illuminate\Support\Collection;
 
 class Support

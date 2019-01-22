@@ -25,20 +25,19 @@ class ScanCodeWechatPayment extends UpayPay implements PayableInterface
         return 'umszj.trade.precreate';
     }
 
-    function bizContent(array $params)
+    function bizContent(PayOrderStruct $order)
     {
-        $bizContent = [
-            'ext_no'          => $params['order_no'],
-            'subject'         => $params['subject'],
+        return [
+            'ext_no'          => $order->order_no,
+            'subject'         => $order->subject,
+            'goods_detail'    => $order->subject,
+            'total_amount'    => $order->amount,
             'body'            => '',
-            'goods_detail'    => 'goods_detail',
-            'total_amount'    => $params['amount'],
             'currency'        => 'CNY',
             'timeout_express' => '15m',
             'qr_code_enable'  => 'N'
         ];
-
-        return $bizContent;
     }
+
 
 }

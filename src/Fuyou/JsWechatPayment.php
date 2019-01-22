@@ -10,10 +10,12 @@ class JsWechatPayment extends FuyouPay implements PayableInterface
 
     function getTradeType()
     {
+        return 'WECHAT';
     }
 
     function endPoint()
     {
+        return 'preCreate';
     }
 
 }

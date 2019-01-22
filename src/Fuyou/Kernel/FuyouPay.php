@@ -9,11 +9,9 @@
 namespace Ddup\Payments\Fuyou\Kernel;
 
 
-use Ddup\Part\Libs\Str;
 use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Contracts\PayableInterface;
 use Ddup\Payments\Helper\Application;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 abstract class FuyouPay implements PayableInterface
@@ -30,24 +28,14 @@ abstract class FuyouPay implements PayableInterface
     private function setCommonParam(Array $payload)
     {
         $payload = array_merge([
-            'version'                => $this->config->version,
-            'ins_cd'                 => '',
-            'mchnt_cd'               => $this->config->mch_id,
-            'term_id'                => '88888888',
-            'random_str'             => Str::rand(20),
             'goods_des'              => '',
             'goods_detail'           => '',
             'goods_tag'              => '',
             'product_id'             => '',
             'addn_inf'               => '',
             'mchnt_order_no'         => '',
-            'curr_type'              => 'CNY',
             'order_amt'              => '',
-            'term_ip'                => Request::createFromGlobals()->server->get('REMOTE_ADDR'),
-            'txn_begin_ts'           => date('YmdHis'),
-            'notify_url'             => $this->config->notify_url,
             'limit_pay'              => '',
-            'trade_type'             => 'FWC',
             'openid'                 => '',
             'sub_openid'             => '',
             'sub_appid'              => '',
@@ -61,7 +49,7 @@ abstract class FuyouPay implements PayableInterface
         return $payload;
     }
 
-    public function pay(Array $payload, PayOrderStruct $order):Collection
+    public function pay(array $payload, PayOrderStruct $order):Collection
     {
         $payload = $this->setCommonParam($payload);
 

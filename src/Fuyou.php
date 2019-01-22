@@ -2,8 +2,10 @@
 
 namespace Ddup\Payments;
 
+use Ddup\Part\Libs\Str;
 use Ddup\Payments\Config\PaymentNotifyStruct;
 use Ddup\Payments\Config\PayOrderStruct;
+use Ddup\Payments\Config\RefundOrderStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Fuyou\Kernel\FuyouConfig;
@@ -30,23 +32,21 @@ class Fuyou implements PaymentInterface
     public function payload()
     {
         return [
-            'notify_url' => $this->config->notify_url,
-            'version'    => $this->config->version,
-            'timestamp'  => date('Y-m-d H:i:s')
+            'ins_cd'       => $this->config->app_id,
+            'mchnt_cd'     => $this->config->mch_id,
+            'notify_url'   => $this->config->notify_url,
+            'version'      => $this->config->version,
+            'trade_type'   => 'FWC',
+            'curr_type'    => 'CNY',
+            'random_str'   => Str::rand(20),
+            'txn_begin_ts' => date('YmdHis'),
+            'term_id'      => '88888888',
+            'timestamp'    => date('Y-m-d H:i:s'),
+            'term_ip'      => Request::createFromGlobals()->server->get('REMOTE_ADDR'),
         ];
     }
 
-    public function cancel($name, $order)
-    {
-        // TODO: Implement cancel() method.
-    }
-
-    public function close($name, $order)
-    {
-        // TODO: Implement close() method.
-    }
-
-    public function find($name, Collection $order):Collection
+    public function find($name, PayOrderStruct $order):Collection
     {
         return new Collection();
     }
@@ -56,7 +56,7 @@ class Fuyou implements PaymentInterface
         return $this->makePay(__CLASS__, $name, $this->app, $this->config)->pay($this->payload(), $order);
     }
 
-    public function refund($name, Collection $order):Collection
+    public function refund($name, RefundOrderStruct $order):Collection
     {
         return new Collection();
     }

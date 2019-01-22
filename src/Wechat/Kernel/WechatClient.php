@@ -4,15 +4,12 @@ namespace Ddup\Payments\Wechat\Kernel;
 
 
 use Ddup\Part\Request\HasHttpRequest;
-use GuzzleHttp\MessageFormatter;
-use GuzzleHttp\Middleware;
 use Illuminate\Support\Collection;
 use Ddup\Payments\Helper\Application;
 
 class WechatClient
 {
     use HasHttpRequest;
-
 
     private $app;
     private $config;
@@ -22,14 +19,7 @@ class WechatClient
         $this->app    = $app;
         $this->config = $config;
 
-        $this->loggerMiddleware();
-    }
-
-    private function loggerMiddleware()
-    {
-        $fomater = new MessageFormatter('{url} {method} {req_body}');
-
-        $this->pushMiddleware(Middleware::log($this->app->logger, $fomater), 'log');
+        $app->registerRequestMiddelware($this);
     }
 
     function getBaseUri()

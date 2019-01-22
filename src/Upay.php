@@ -4,6 +4,7 @@ namespace Ddup\Payments;
 
 use Ddup\Payments\Config\PaymentNotifyStruct;
 use Ddup\Payments\Config\PayOrderStruct;
+use Ddup\Payments\Config\RefundOrderStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Helper\MakePaymentTrait;
@@ -55,16 +56,6 @@ class Upay implements PaymentInterface
         return $this->makePay(__CLASS__, $name, $this->app, $this->config);
     }
 
-    public function cancel($name, $order)
-    {
-        // TODO: Implement cancel() method.
-    }
-
-    public function close($name, $order)
-    {
-        // TODO: Implement close() method.
-    }
-
     private function sendBizContent(&$params, $channel, $bizType, $bizContent)
     {
         $params['biz_channel'] = $channel;
@@ -78,7 +69,7 @@ class Upay implements PaymentInterface
         return new Collection($reBizContent);
     }
 
-    public function find($name, Collection $order):Collection
+    public function find($name, PayOrderStruct $order):Collection
     {
         $orderCollect = new Collection($order);
         $params       = $this->payload();
@@ -96,13 +87,13 @@ class Upay implements PaymentInterface
         return new Collection($result);
     }
 
+
     public function pay($name, PayOrderStruct $order):Collection
     {
         return $this->getHandle($name)->pay($this->payload(), $order);
     }
 
-
-    public function refund($name, Collection $order):Collection
+    public function refund($name, RefundOrderStruct $order):Collection
     {
         $orderCollect = new Collection($order);
         $params       = $this->payload();

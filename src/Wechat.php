@@ -5,6 +5,7 @@ namespace Ddup\Payments;
 use Ddup\Part\Libs\Str;
 use Ddup\Payments\Config\PaymentNotifyStruct;
 use Ddup\Payments\Config\PayOrderStruct;
+use Ddup\Payments\Config\RefundOrderStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Helper\Application;
@@ -55,15 +56,7 @@ class Wechat implements PaymentInterface
         return new WechatClient($this->app, $this->config);
     }
 
-    public function cancel($name, $order)
-    {
-    }
-
-    public function close($name, $order)
-    {
-    }
-
-    public function find($name, Collection $order):Collection
+    public function find($name, PayOrderStruct $order):Collection
     {
         return new Collection();
     }
@@ -73,7 +66,7 @@ class Wechat implements PaymentInterface
         return $this->makePay(__CLASS__, $name, $this->app, $this->config)->pay($this->payload(), $order);
     }
 
-    public function refund($name, Collection $order):Collection
+    public function refund($name, RefundOrderStruct $order):Collection
     {
         $params                  = $this->payload();
         $params['total_fee']     = $order->get('amount');

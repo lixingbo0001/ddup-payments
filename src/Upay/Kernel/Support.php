@@ -4,7 +4,7 @@ namespace Ddup\Payments\Upay\Kernel;
 
 
 use Ddup\Part\Libs\Arr;
-use Ddup\Payments\Helper\Exceptions\PayPaymentException;
+use Ddup\Payments\Exceptions\PayPaymentException;
 
 class Support
 {

@@ -8,8 +8,6 @@ use Ddup\Part\Api\ApiResulTrait;
 use Ddup\Part\Libs\Helper;
 use Ddup\Part\Request\HasHttpRequest;
 use Ddup\Payments\Exceptions\PayApiException;
-use GuzzleHttp\MessageFormatter;
-use GuzzleHttp\Middleware;
 use Illuminate\Support\Collection;
 use Ddup\Payments\Helper\Application;
 
@@ -27,19 +25,12 @@ class UpayClient
 
         $this->timeout = 20;
 
-        $this->loggerMiddleware();
+        $app->registerRequestMiddelware($this);
     }
 
     public function newResult($ret):ApiResultInterface
     {
         return new UpayApiResult($ret);
-    }
-
-    private function loggerMiddleware()
-    {
-        $fomater = new MessageFormatter('{url} {method} {req_body}');
-
-        $this->pushMiddleware(Middleware::log($this->app->logger, $fomater), 'log');
     }
 
     public function requestOptions()

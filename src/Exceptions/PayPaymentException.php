@@ -1,6 +1,6 @@
 <?php
 
-namespace Ddup\Payments\Helper\Exceptions;
+namespace Ddup\Payments\Exceptions;
 
 
 use Ddup\Part\Exception\ExceptionCustomCodeAble;

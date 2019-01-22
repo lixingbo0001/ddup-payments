@@ -5,6 +5,7 @@ namespace Ddup\Payments\Helper;
 use Ddup\Part\Libs\Obj;
 use Ddup\Payments\Config\PaymentNotifyStruct;
 use Ddup\Payments\Config\PayOrderStruct;
+use Ddup\Payments\Config\RefundOrderStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Illuminate\Support\Collection;
 
@@ -32,17 +33,7 @@ class PayProxy implements PaymentInterface
         return $this->name . '.' . $method;
     }
 
-    public function cancel($name, $order)
-    {
-        return $this->paymentApplication->close($name, $order);
-    }
-
-    public function close($name, $order)
-    {
-        return $this->paymentApplication->close($name, $order);
-    }
-
-    public function find($name, Collection $order):Collection
+    public function find($name, PayOrderStruct $order):Collection
     {
         return $this->paymentApplication->find($name, $order);
     }
@@ -60,7 +51,7 @@ class PayProxy implements PaymentInterface
         return $result;
     }
 
-    public function refund($name, Collection $order):Collection
+    public function refund($name, RefundOrderStruct $order):Collection
     {
         $action_name = $this->action(__FUNCTION__);
 

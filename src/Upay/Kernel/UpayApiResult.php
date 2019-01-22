@@ -13,6 +13,14 @@ class UpayApiResult implements ApiResultInterface
 
     public function __construct($ret)
     {
+        if (!$ret) {
+            $ret = ['code' => -500, 'message' => '接口返回空字符串'];
+        }
+
+        if (is_string($ret)) {
+            $ret = json_decode($ret, true);
+        }
+
         $this->_result = new Collection($ret);
     }
 

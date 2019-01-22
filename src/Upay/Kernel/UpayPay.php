@@ -26,12 +26,12 @@ abstract class UpayPay implements PayableInterface
         return '';
     }
 
-    abstract function bizContent(array $params);
+    abstract function bizContent(PayOrderStruct $order);
 
     public function payRequest(array $payload, PayOrderStruct $order):Collection
     {
         $params     = array_merge($payload, $order->toArray());
-        $bizContent = $this->bizContent($params);
+        $bizContent = $this->bizContent($order);
         $params     = Arr::getIfExists($params, $this->getCommonFields());
 
         $params['biz_content'] = json_encode($bizContent, JSON_UNESCAPED_UNICODE);

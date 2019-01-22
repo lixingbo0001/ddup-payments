@@ -15,19 +15,6 @@ class MicroWechatPayment extends UpayPay implements PayableInterface
         return parent::payRequest($payload, $order);
     }
 
-    function bizContent(array $params)
-    {
-        $bizContent = [
-            'ext_no'       => $params['order_no'],
-            'auth_code'    => $params['auth_code'],
-            'subject'      => $params['subject'],
-            'total_amount' => $params['amount'],
-            'currency'     => 'CNY',
-        ];
-
-        return $bizContent;
-    }
-
     public function getChannel()
     {
         return 'umszj.channel.wxpay';
@@ -36,5 +23,16 @@ class MicroWechatPayment extends UpayPay implements PayableInterface
     public function getTradeType()
     {
         return 'umszj.trade.pay';
+    }
+
+    function bizContent(PayOrderStruct $order)
+    {
+        return [
+            'ext_no'       => $order->order_no,
+            'auth_code'    => $order->auth_code,
+            'subject'      => $order->subject,
+            'total_amount' => $order->amount,
+            'currency'     => 'CNY',
+        ];
     }
 }
