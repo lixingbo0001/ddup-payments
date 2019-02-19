@@ -57,8 +57,8 @@ class Support
 
     public static function signString($param)
     {
-        Arr::filterCallback($param, function ($k) {
-            return $k == 'sign' || strstr($k, 'reserved');
+        Arr::filterCallback($param, function ($k, $v) {
+            return $k == 'sign' || strstr($k, 'reserved') || is_null($v);
         });
 
         $param = self::argSort($param);
@@ -68,7 +68,9 @@ class Support
 
     public static function sign($param, $pem_path)
     {
-        return self::encode(self::signString($param), $pem_path);
+        $string = self::signString($param);
+
+        return self::encode($string, $pem_path);
     }
 
     public static function toXml($data)

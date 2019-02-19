@@ -14,6 +14,19 @@ use Ddup\Payments\Test\PaymentTest;
 class SignTest extends PaymentTest
 {
 
+    public function test_prod()
+    {
+        $his_sign = 'JTKnMTUbPy4kK7ZW7+HO0JWE0Px8tMGFCCE4AYxPBQWn5YKYKqHGcHS5CkLt9AJ++Hi8Ls3BAN1Ua9evJ/NZzbCiFQNMGv/t0IUM2BqE0gviO3Mb5BjTkTrtsyBbslEjoJn1HLZhVUVe3SQLua3FEawFBkIXsrWe7VJQbsJ28kU=';
+
+        $data_str = '{"addn_inf":"","openid":"oyqy4w1wdTuMWx3ZPMmQdh8qTEO0","order_type":"WECHAT","trade_type":"WECHAT","reserved_expire_minute":5,"mchnt_order_no":"121140025730481968174395026","goods_des":"描述","order_amt":100,"ins_cd":"08M0026086","mchnt_cd":"0003430F1912766","notify_url":"http:\/\/test.modernmasters.com\/index.php\/Supplier\/User\/myResources.html","version":"1","curr_type":"CNY","random_str":"E6Rrwfmtgqh3472sZkeK","txn_begin_ts":"20190219014909","term_id":"88888888","term_ip":"117.29.110.187","sign":"JTKnMTUbPy4kK7ZW7+HO0JWE0Px8tMGFCCE4AYxPBQWn5YKYKqHGcHS5CkLt9AJ++Hi8Ls3BAN1Ua9evJ\/NZzbCiFQNMGv\/t0IUM2BqE0gviO3Mb5BjTkTrtsyBbslEjoJn1HLZhVUVe3SQLua3FEawFBkIXsrWe7VJQbsJ28kU="}';
+
+        $data = json_decode($data_str, true);
+
+        $my_sign = Support::sign($data, self::pem_key_prod);
+
+        $this->assertEquals($his_sign, $my_sign);
+    }
+
     public function test_sign2()
     {
 

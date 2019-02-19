@@ -11,6 +11,7 @@ namespace Ddup\Payments\Fuyou\Kernel;
 
 use Ddup\Part\Api\ApiResultInterface;
 use Ddup\Part\Api\ApiResulTrait;
+use Ddup\Part\Libs\OutCli;
 use Ddup\Part\Request\HasHttpRequest;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Helper\Application;

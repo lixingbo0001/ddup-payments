@@ -31,11 +31,12 @@ abstract class FuyouPay implements PayableInterface
             "addn_inf"               => "",
             "openid"                 => $order->get('openid'),
             'order_type'             => $this->getTradeType(),
-            'trade_type'             => $this->getTradeType(),
             'reserved_expire_minute' => $this->config->expire_minute,
             'mchnt_order_no'         => $order->order_no,
             'goods_des'              => $order->subject,
             'order_amt'              => $order->amount,
+            'goods_detail'           => '',
+            'goods_tag'              => ''
         ], $payload);
 
         return $payload;

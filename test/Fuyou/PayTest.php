@@ -17,6 +17,7 @@ class PayTest extends PaymentTest
 
     public function test_fuyou()
     {
+
         try {
 
             $param = [

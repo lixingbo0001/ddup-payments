@@ -8,7 +8,6 @@
 
 namespace Ddup\Payments\Test\Fuyou;
 
-use Ddup\Part\Libs\OutCli;
 use Ddup\Part\Libs\Str;
 use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Test\PaymentTest;
@@ -25,7 +24,6 @@ class ProdPayTest extends PaymentTest
                 'amount'       => 1,
                 'order_no'     => 1211400 . Str::rand(20, range(0, 9)),
                 'subject'      => '描述',
-                'openid'       => 'oyqy4w1wdTuMWx3ZPMmQdh8qTEO0'
             ];
 
             $order = $this->app->create('fuyou',
@@ -33,7 +31,7 @@ class ProdPayTest extends PaymentTest
                     'mode'       => 'PROD',
                     'pem_key'    => self::pem_key_prod,
                     'app_id'     => '08M0026086',
-                    'mch_id'     => '0003430F1912766',
+                    'mch_id'     => '0003430F1742979',
                     'notify_url' => 'http://test.modernmasters.com/index.php/Supplier/User/myResources.html',
                 ]
             )->pay('jsWechat', new PayOrderStruct($param));
