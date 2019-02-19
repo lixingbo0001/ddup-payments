@@ -2,19 +2,19 @@
 /**
  * Created by PhpStorm.
  * User: lixingbo
- * Date: 2018/10/1
- * Time: 上午10:22
+ * Date: 2019/1/23
+ * Time: 下午4:37
  */
 
-namespace Ddup\Payments\Test;
-
+namespace Ddup\Payments\Test\Wechat;
 
 use Ddup\Payments\Wechat\Kernel\Support;
+use Ddup\Payments\Test\PaymentTest;
 
-class SignTest extends TestCase
+class SignTest extends PaymentTest
 {
 
-    function testSign()
+    function test_string()
     {
         $param = [
             'package'   => 'prepay_id=wx2017033010242291fcfe0db70013231072',
@@ -32,5 +32,4 @@ class SignTest extends TestCase
 
         $this->assertEquals('22D9B4E54AB1950F51E0649E8810ACD6', $sign);
     }
-
 }

@@ -29,21 +29,26 @@ class Fuyou implements PaymentInterface
         $this->config = new FuyouConfig($app->config);
     }
 
+    public function isYuan()
+    {
+        return false;
+    }
+
     public function payload()
     {
-        return [
+        $payload = [
             'ins_cd'       => $this->config->app_id,
             'mchnt_cd'     => $this->config->mch_id,
             'notify_url'   => $this->config->notify_url,
             'version'      => $this->config->version,
-            'trade_type'   => 'FWC',
             'curr_type'    => 'CNY',
             'random_str'   => Str::rand(20),
             'txn_begin_ts' => date('YmdHis'),
             'term_id'      => '88888888',
-            'timestamp'    => date('Y-m-d H:i:s'),
-            'term_ip'      => Request::createFromGlobals()->server->get('REMOTE_ADDR'),
+            'term_ip'      => Request::createFromGlobals()->server->get('REMOTE_ADDR', '117.29.110.187'),
         ];
+
+        return $payload;
     }
 
     public function find($name, PayOrderStruct $order):Collection
@@ -51,14 +56,19 @@ class Fuyou implements PaymentInterface
         return new Collection();
     }
 
-    public function pay($name, PayOrderStruct $order):Collection
+    public function pay($name, PayOrderStruct $order):PayOrderStruct
     {
-        return $this->makePay(__CLASS__, $name, $this->app, $this->config)->pay($this->payload(), $order);
+        $result = $this->makePay(__CLASS__, $name, $this->app, $this->config)->pay($this->payload(), $order);
+
+        $order->transaction_id = $result->get('transaction_id', '');
+        $order->qr_code        = $result->get('qr_code');
+
+        return $order;
     }
 
-    public function refund($name, RefundOrderStruct $order):Collection
+    public function refund($name, RefundOrderStruct $order):RefundOrderStruct
     {
-        return new Collection();
+        return $order;
     }
 
     public function success()
@@ -71,7 +81,7 @@ class Fuyou implements PaymentInterface
         $data = Request::createFromGlobals()->all();
 
         if (!$data) {
-            throw  new PayApiException("Fuyou notify error:not data", PayApiException::api_error);
+            throw  new PayApiException("富友通道异步通知出错:没返回数据", PayApiException::api_error);
         }
 
         return new Collection($data);

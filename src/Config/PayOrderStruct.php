@@ -19,4 +19,6 @@ class PayOrderStruct extends StructReadable
     public $openid;
     public $expired_at;
     public $auth_code;
+    public $transaction_id;
+    public $qr_code;
 }

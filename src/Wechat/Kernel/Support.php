@@ -80,8 +80,8 @@ class Support
         }
 
         throw new PayApiException(
-            'Get Wechat API Error:' . $result->get('return_msg') . $result->get('err_code_des', ''),
-            PayApiException::api_message,
+            '微信通道报错:' . $result->get('return_msg') . $result->get('err_code_des', ''),
+            PayApiException::api_error,
             $result->all()
         );
     }
@@ -131,7 +131,7 @@ class Support
     public static function toXml($data):string
     {
         if (!is_array($data) || count($data) <= 0) {
-            throw new PayApiException('Convert To Xml Error! Invalid Array!', PayApiException::data_convert_fail);
+            throw new PayApiException('微信通道xml数据转换失败', PayApiException::data_convert_fail);
         }
 
         $xml = '<xml>';
@@ -149,7 +149,7 @@ class Support
         if (is_array($xml)) return $xml;
 
         if (!$xml) {
-            throw new PayApiException('Convert To Array Error! Invalid Xml!', PayApiException::data_convert_fail);
+            throw new PayApiException('微信错误的xml结构', PayApiException::data_convert_fail);
         }
 
         libxml_disable_entity_loader(true);

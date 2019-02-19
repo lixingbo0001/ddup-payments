@@ -10,6 +10,8 @@ namespace Ddup\Payments\Fuyou\Kernel;
 
 
 use Ddup\Part\Api\ApiResultInterface;
+use Ddup\Part\Libs\Helper;
+use Ddup\Part\Message\MsgFromXml;
 use Illuminate\Support\Collection;
 
 class FuyouApiResult implements ApiResultInterface
@@ -19,7 +21,13 @@ class FuyouApiResult implements ApiResultInterface
 
     public function __construct($ret)
     {
-        $this->_result = new Collection($ret);
+        if (!$ret) {
+            $result = ['result_code' => -500, 'result_msg' => '富友接口返回空'];
+        } else {
+            $result = new MsgFromXml($ret);
+        }
+
+        $this->_result = Helper::toCollection($result);
     }
 
     function isSuccess()

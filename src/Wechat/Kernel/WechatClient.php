@@ -3,6 +3,7 @@
 namespace Ddup\Payments\Wechat\Kernel;
 
 
+use Ddup\Part\Libs\OutCli;
 use Ddup\Part\Request\HasHttpRequest;
 use Illuminate\Support\Collection;
 use Ddup\Payments\Helper\Application;
@@ -19,7 +20,7 @@ class WechatClient
         $this->app    = $app;
         $this->config = $config;
 
-        $app->registerRequestMiddelware($this);
+        $app->registerRequestMiddleware($this);
     }
 
     function getBaseUri()

@@ -9,12 +9,12 @@ class JsAliPayment extends FuyouPay implements PayableInterface
 {
     function getTradeType()
     {
-        return 'ALIPAY';
+        return 'FWC';
     }
 
     function endPoint()
     {
-        return 'preCreate';
+        return 'wxPreCreate';
     }
 
 }

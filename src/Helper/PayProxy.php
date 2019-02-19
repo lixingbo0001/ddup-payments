@@ -2,90 +2,106 @@
 
 namespace Ddup\Payments\Helper;
 
-use Ddup\Part\Libs\Obj;
+use Ddup\Part\Libs\Unit;
 use Ddup\Payments\Config\PaymentNotifyStruct;
 use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Config\RefundOrderStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
+use Ddup\Payments\Contracts\PaymentProxyAble;
 use Illuminate\Support\Collection;
 
-class PayProxy implements PaymentInterface
+class PayProxy implements PaymentProxyAble
 {
 
-    private $paymentApplication;
+    /**
+     * @var PaymentInterface
+     */
+    private $api;
+    private $app;
 
-    private $name;
-
-    public function __construct(PaymentInterface $paymentApplication)
+    public function __construct(Application $container)
     {
-        $this->paymentApplication = $paymentApplication;
-
-        $this->setName();
+        $this->app = $container;
     }
 
-    private function setName()
+    public function setPayment(PaymentInterface $api)
     {
-        $this->name = strtolower(Obj::name($this->paymentApplication));
+        $this->api = $api;
     }
 
-    private function action($method)
+    public function isYuan()
     {
-        return $this->name . '.' . $method;
+        return $this->api->isYuan();
+    }
+
+    private function moneyBefore($amount)
+    {
+        if ($this->api->isYuan()) {
+            return $amount;
+        }
+
+        return Unit::yuntoFen($amount);
+    }
+
+    private function moneyAfter($amount)
+    {
+        if ($this->api->isYuan()) {
+            return $amount;
+        }
+
+        return Unit::fentoYun($amount);
     }
 
     public function find($name, PayOrderStruct $order):Collection
     {
-        return $this->paymentApplication->find($name, $order);
-    }
+        $order->amount = $this->moneyBefore($order->amount);
 
-    public function pay($gateway, PayOrderStruct $order):Collection
-    {
-        $name = $this->action(__FUNCTION__);
-
-        MoneyFilter::before($name, $order);
-
-        $result = $this->paymentApplication->pay($gateway, $order);
-
-        MoneyFilter::after($name, $result);
+        $result = $this->api->find($name, $order);
 
         return $result;
     }
 
-    public function refund($name, RefundOrderStruct $order):Collection
+    public function pay($gateway, PayOrderStruct $order):PayOrderStruct
     {
-        $action_name = $this->action(__FUNCTION__);
+        $order->amount = $this->moneyBefore($order->amount);
 
-        MoneyFilter::before($action_name, $order);
+        $result = $this->api->pay($gateway, $order);
 
-        $result = $this->paymentApplication->refund($name, $order);
+        $result->amount = $this->moneyAfter($result->amount);
 
-        MoneyFilter::after($action_name, $result);
+        return $result;
+    }
+
+    public function refund($name, RefundOrderStruct $order):RefundOrderStruct
+    {
+        $order->amount = $this->moneyBefore($order->amount);
+
+        $result = $this->api->refund($name, $order);
+
+        $result->amount = $this->moneyAfter($result->amount);
 
         return $result;
     }
 
     public function success()
     {
-        return $this->paymentApplication->success();
+        return $this->api->success();
     }
 
     public function verify():Collection
     {
-        $result = $this->paymentApplication->verify();
+        $result = $this->api->verify();
 
         return $result;
     }
 
     public function callbackConversion($data):PaymentNotifyStruct
     {
-        $name = $this->action(__FUNCTION__);
+        $result = $this->api->callbackConversion($data);
 
-        $result = $this->paymentApplication->callbackConversion($data);
+        $result->amount       = $this->moneyAfter($result->amount);
+        $result->total_amount = $this->moneyAfter($result->total_amount);
 
-        $result = new Collection($result->toArray());
-
-        MoneyFilter::after($name, $result);
-
-        return new PaymentNotifyStruct($result);
+        return $result;
     }
 }

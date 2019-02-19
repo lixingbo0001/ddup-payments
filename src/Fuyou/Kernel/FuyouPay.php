@@ -25,25 +25,17 @@ abstract class FuyouPay implements PayableInterface
         $this->client = new FuyouClient($app, $config);
     }
 
-    private function setCommonParam(Array $payload)
+    private function setCommonParam(array $payload, PayOrderStruct $order)
     {
         $payload = array_merge([
-            'goods_des'              => '',
-            'goods_detail'           => '',
-            'goods_tag'              => '',
-            'product_id'             => '',
-            'addn_inf'               => '',
-            'mchnt_order_no'         => '',
-            'order_amt'              => '',
-            'limit_pay'              => '',
-            'openid'                 => '',
-            'sub_openid'             => '',
-            'sub_appid'              => '',
+            "addn_inf"               => "",
+            "openid"                 => $order->get('openid'),
+            'order_type'             => $this->getTradeType(),
+            'trade_type'             => $this->getTradeType(),
             'reserved_expire_minute' => $this->config->expire_minute,
-            'reserved_fy_term_id'    => '',
-            'reserved_fy_term_type'  => '',
-            'reserved_txn_bonus'     => '',
-            'reserved_fy_term_sn'    => '',
+            'mchnt_order_no'         => $order->order_no,
+            'goods_des'              => $order->subject,
+            'order_amt'              => $order->amount,
         ], $payload);
 
         return $payload;
@@ -51,17 +43,13 @@ abstract class FuyouPay implements PayableInterface
 
     public function pay(array $payload, PayOrderStruct $order):Collection
     {
-        $payload = $this->setCommonParam($payload);
-
-        $payload['mchnt_order_no'] = $order->order_no;
-        $payload['goods_des']      = $order->subject;
-        $payload['order_amt']      = $order->amount;
+        $payload = $this->setCommonParam($payload, $order);
 
         $payload['sign'] = Support::sign($payload, $this->config->pem_key);
 
         $this->client->requestApi($this->endPoint(), $payload);
 
-        return $this->client->result->getData();
+        return $this->client->result()->getData();
     }
 
     function getChannel()

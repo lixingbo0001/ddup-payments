@@ -11,6 +11,7 @@ namespace Ddup\Payments\Providers;
 
 use Ddup\Payments\Fuyou;
 use Ddup\Payments\Helper\Application;
+use Ddup\Payments\Helper\PayProxy;
 use Ddup\Payments\Upay;
 use Ddup\Payments\Wechat;
 use Pimple\Container;
@@ -23,19 +24,31 @@ class ChannelProvider implements ServiceProviderInterface
     {
         if (!($pimple instanceof Application)) return;
 
+        $this->proxy($pimple);
+
+        $this->channels($pimple);
+    }
+
+    private function proxy(Application $pimple)
+    {
+        $pimple->proxy = function () use ($pimple) {
+            $proxy = new PayProxy($pimple);
+            return $proxy;
+        };
+    }
+
+    private function channels(Application $pimple)
+    {
         $pimple->wechat = function () use ($pimple) {
-            $api = new Wechat($pimple);
-            return $api;
+            return new Wechat($pimple);
         };
 
         $pimple->upay = function () use ($pimple) {
-            $api = new Upay($pimple);
-            return $api;
+            return new Upay($pimple);
         };
 
         $pimple->fuyou = function () use ($pimple) {
-            $api = new Fuyou($pimple);
-            return $api;
+            return new Fuyou($pimple);
         };
     }
 }

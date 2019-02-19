@@ -25,7 +25,7 @@ class UpayClient
 
         $this->timeout = 20;
 
-        $app->registerRequestMiddelware($this);
+        $app->registerRequestMiddleware($this);
     }
 
     public function newResult($ret):ApiResultInterface

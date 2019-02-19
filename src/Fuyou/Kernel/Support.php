@@ -3,6 +3,8 @@
 namespace Ddup\Payments\Fuyou\Kernel;
 
 
+use Ddup\Part\Libs\Arr;
+use Ddup\Part\Message\MsgFromArray;
 use Ddup\Part\Message\MsgToXml;
 use Ddup\Payments\Exceptions\PayPaymentException;
 
@@ -11,12 +13,12 @@ class Support
 
     public static function getBaseUri(FuyouConfig $config)
     {
-        switch ($config->mode) {
+        switch (strtolower($config->mode)) {
             case $config::MODE_PROD:
-                return 'https://spay.fuiou.com';
+                return 'https://spay-mc.fuioupay.com';
                 break;
             default:
-                return 'http://116.239.4.195:28164';
+                return 'https://fundwx.fuiou.com';
                 break;
         }
     }
@@ -55,9 +57,12 @@ class Support
 
     public static function signString($param)
     {
-        array_forget($param, ['sign', 'reserved']);
+        Arr::filterCallback($param, function ($k) {
+            return $k == 'sign' || strstr($k, 'reserved');
+        });
 
         $param = self::argSort($param);
+
         return self::createLinkstring($param);
     }
 
@@ -68,8 +73,18 @@ class Support
 
     public static function toXml($data)
     {
-        $xml_content = new MsgToXml($data);
+        $xml_content = new MsgToXml(new MsgFromArray($data));
 
         return "<?xml version=\"1.0\" encoding=\"GBK\" standalone=\"yes\"?><xml>" . $xml_content . "</xml>";
+    }
+
+    public static function bodyEncode($xml)
+    {
+        return urlencode(urlencode($xml));
+    }
+
+    public static function bodyDecode($xml)
+    {
+        return urldecode($xml);
     }
 }

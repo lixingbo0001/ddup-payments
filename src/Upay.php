@@ -32,6 +32,11 @@ class Upay implements PaymentInterface
         $this->config = new UpayConfig($app->config);
     }
 
+    public function isYuan()
+    {
+        return false;
+    }
+
     public function payload()
     {
         return [
@@ -87,13 +92,16 @@ class Upay implements PaymentInterface
         return new Collection($result);
     }
 
-
-    public function pay($name, PayOrderStruct $order):Collection
+    public function pay($name, PayOrderStruct $order):PayOrderStruct
     {
-        return $this->getHandle($name)->pay($this->payload(), $order);
+        $result = $this->getHandle($name)->pay($this->payload(), $order);
+
+        $order->transaction_id = $result->get('transaction_id');
+
+        return $order;
     }
 
-    public function refund($name, RefundOrderStruct $order):Collection
+    public function refund($name, RefundOrderStruct $order):RefundOrderStruct
     {
         $orderCollect = new Collection($order);
         $params       = $this->payload();
@@ -112,14 +120,10 @@ class Upay implements PaymentInterface
         $result       = $this->getClient()->requestApi('', $params);
         $reBizContent = $this->getBizContent($result);
 
-        $return = [
-            "transaction_id"    => $reBizContent->get('trade_no'),
-            "openid"            => $reBizContent->get('buyer_id'),
-            "attach"            => $reBizContent->get('attach'),
-            "channel_refund_id" => $reBizContent->get('back_trade_no')
-        ];
+        $order->transaction_id    = $reBizContent->get('trade_no');
+        $order->channel_refund_id = $reBizContent->get('back_trade_no');
 
-        return new Collection($return);
+        return $order;
     }
 
     public function success()
@@ -132,7 +136,7 @@ class Upay implements PaymentInterface
         $data = Request::createFromGlobals()->all();
 
         if (!$data) {
-            throw  new PayApiException("Upay notify error:not data", PayApiException::api_error);
+            throw  new PayApiException("银联通道异步通知出错:没返回数据", PayApiException::api_error);
         }
 
         return new Collection($data);

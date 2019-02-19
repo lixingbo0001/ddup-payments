@@ -31,6 +31,11 @@ class Wechat implements PaymentInterface
         $this->config = new WechatConfig($this->app->config);
     }
 
+    public function isYuan()
+    {
+        return true;
+    }
+
     private function payload()
     {
         $payload = [
@@ -61,12 +66,16 @@ class Wechat implements PaymentInterface
         return new Collection();
     }
 
-    public function pay($name, PayOrderStruct $order):Collection
+    public function pay($name, PayOrderStruct $order):PayOrderStruct
     {
-        return $this->makePay(__CLASS__, $name, $this->app, $this->config)->pay($this->payload(), $order);
+        $result = $this->makePay(__CLASS__, $name, $this->app, $this->config)->pay($this->payload(), $order);
+
+        $order->transaction_id = $result->get('transaction_id');
+
+        return $order;
     }
 
-    public function refund($name, RefundOrderStruct $order):Collection
+    public function refund($name, RefundOrderStruct $order):RefundOrderStruct
     {
         $params                  = $this->payload();
         $params['total_fee']     = $order->get('amount');
@@ -78,7 +87,10 @@ class Wechat implements PaymentInterface
 
         $result = $this->getClient()->safeRequestApi('secapi/pay/refund', $params);
 
-        return new Collection($result);
+        $order->transaction_id    = $result->get('trade_no');
+        $order->channel_refund_id = $result->get('back_trade_no');
+
+        return $order;
     }
 
     public function success()

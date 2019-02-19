@@ -26,5 +26,5 @@ class FuyouConfig extends StructReadable
     public $expire_minute = 5;
     public $sub_mch_id;
     public $sub_app_id;
-    public $version       = '1.0';
+    public $version       = '1';
 }

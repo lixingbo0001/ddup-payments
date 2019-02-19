@@ -16,4 +16,6 @@ class RefundOrderStruct extends StructReadable
     public $amount;
     public $order_no;
     public $refund_order_no;
+    public $transaction_id;
+    public $channel_refund_id;
 }

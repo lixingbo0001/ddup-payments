@@ -11,7 +11,6 @@ namespace Ddup\Payments\Fuyou\Kernel;
 
 use Ddup\Part\Api\ApiResultInterface;
 use Ddup\Part\Api\ApiResulTrait;
-use Ddup\Part\Libs\Helper;
 use Ddup\Part\Request\HasHttpRequest;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Helper\Application;
@@ -28,7 +27,7 @@ class FuyouClient
         $this->app    = $app;
         $this->config = $config;
 
-        $app->registerRequestMiddelware($this);
+        $this->app->registerRequestMiddleware($this);
     }
 
     public function newResult($ret):ApiResultInterface
@@ -48,20 +47,35 @@ class FuyouClient
 
     public function requestOptions()
     {
-        return [];
+        return [
+            'headers' => [
+                'content-type' => 'application/x-www-form-urlencoded'
+            ]
+        ];
     }
 
-    public function requestApi($endpoint, array $parmas)
+    public function requestApi($endpoint, $parmas)
     {
-        $ret = $this->post($endpoint, $parmas);
+        $xml = Support::toXml($parmas);
+
+        $this->app->logger->debug('请求富友原始数据', $parmas);
+
+        $ret = $this->post($endpoint, 'req=' . Support::bodyEncode($xml));
+
+        $ret = Support::bodyDecode($ret);
 
         $this->parseResult($ret);
 
-        if (!$this->result->isSuccess()) {
-            throw new PayApiException('银联通道报错：' . $this->result->getMsg(), PayApiException::api_error, Helper::toArray($ret));
+        if (!$this->result()->isSuccess()) {
+
+            throw new PayApiException(
+                '富友通道报错：' . $this->result()->getMsg() . ':' . $this->result()->getCode(),
+                PayApiException::api_error,
+                $this->result()->getData()
+            );
         }
 
-        return $this->result->getData();
+        return $this->result()->getData();
     }
 
 }

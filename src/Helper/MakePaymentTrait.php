@@ -1,8 +1,8 @@
 <?php namespace Ddup\Payments\Helper;
 
+use Ddup\Payments\Exceptions\PayPaymentException;
 use Illuminate\Support\Str;
 use Ddup\Payments\Contracts\PayableInterface;
-use Ddup\Payments\Exceptions\PayApiException;
 
 
 Trait MakePaymentTrait
@@ -14,7 +14,7 @@ Trait MakePaymentTrait
         $class = $preFix . '\\' . Str::studly($name) . 'Payment';
 
         if (!class_exists($class)) {
-            throw new PayApiException("Pay Gateway [{$class}] Not Exists", PayApiException::pay_method_undefind);
+            throw new PayPaymentException("支付方式 [{$class}] 不存在", PayPaymentException::pay_method_undefind);
         }
 
         $app = new $class($app, $config);
@@ -23,7 +23,7 @@ Trait MakePaymentTrait
             return $app;
         }
 
-        throw new PayApiException("Pay Gateway [{$class}] Must Be An Instance Of PayableInterface", PayApiException::pay_gateway_not_instance);
+        throw new PayPaymentException("支付方式 [{$class}] 必须实现 PayableInterface", PayPaymentException::pay_gateway_not_instance);
     }
 
 }

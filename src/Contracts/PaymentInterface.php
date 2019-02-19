@@ -9,15 +9,17 @@ use Illuminate\Support\Collection;
 
 interface PaymentInterface
 {
-    public function pay($name, PayOrderStruct $order):Collection;
+    public function pay($name, PayOrderStruct $order):PayOrderStruct;
 
     public function find($name, PayOrderStruct $order):Collection;
 
-    public function refund($name, RefundOrderStruct $order):Collection;
+    public function refund($name, RefundOrderStruct $order):RefundOrderStruct;
 
     public function verify():Collection;
 
     public function success();
+
+    public function isYuan();
 
     public function callbackConversion($data):PaymentNotifyStruct;
 }

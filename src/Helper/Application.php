@@ -2,7 +2,9 @@
 
 
 use Ddup\Payments\Contracts\PaymentInterface;
+use Ddup\Payments\Contracts\PaymentProxyAble;
 use Ddup\Payments\Exceptions\PayApiException;
+use Ddup\Payments\Exceptions\PayPaymentException;
 use Ddup\Payments\Providers\ChannelProvider;
 use Ddup\Payments\Providers\LogProvider;
 use GuzzleHttp\MessageFormatter;
@@ -17,7 +19,7 @@ use Psr\Log\LoggerInterface;
  * @property PaymentInterface wechat;
  * @property PaymentInterface upay;
  * @property PaymentInterface fuyou;
- * @package Ddup\Payments\Helper
+ * @property PaymentProxyAble proxy;
  */
 class Application extends Container
 {
@@ -29,9 +31,9 @@ class Application extends Container
         $this->registerProvidrs($this->providers());
     }
 
-    public function registerRequestMiddelware($client)
+    public function registerRequestMiddleware($client)
     {
-        $fomater = new MessageFormatter('{url} {method} {req_body} 返回： {res_body}');
+        $fomater = new MessageFormatter('{url} {method} {req_body}');
 
         $client->pushMiddleware(Middleware::log($this->logger, $fomater), 'log');
     }
@@ -61,29 +63,47 @@ class Application extends Container
         ];
     }
 
-    protected function create($gateway):PaymentInterface
+    private function getPayment($gateway)
     {
-        if (!$this->offsetExists($gateway)) {
-            throw new PayApiException("暂不支持的支付通道[{$gateway}]", PayApiException::pay_gateway_not_instance);
-        }
-
         $payment = $this->$gateway;
 
         if (!($payment instanceof PaymentInterface)) {
-            throw new PayApiException("[{$gateway}]需要实现 PaymentInterface", PayApiException::pay_gateway_not_instance);
+            throw new PayPaymentException("[{$gateway}]需要实现 PaymentInterface", PayPaymentException::pay_gateway_not_instance);
         }
 
         return $payment;
     }
 
-    public static function payment($method, $config):PaymentInterface
+    private function packagePayment(PaymentInterface $payment)
     {
-        $app = new self;
+        if ($this->proxy) {
 
-        $app->config = $config;
+            $this->proxy->setPayment($payment);
 
-        $api = $app->create($method);
+            return $this->proxy;
+        }
 
-        return new PayProxy($api);
+        return $payment;
+    }
+
+    private function init($config)
+    {
+        $this->config = $config;
+
+        PayApiException::setApp($this);
+    }
+
+    function create($gateway, $config):PaymentInterface
+    {
+        if (!$this->offsetExists($gateway)) {
+            throw new PayPaymentException("暂不支持的支付通道[{$gateway}]", PayPaymentException::pay_gateway_not_instance);
+        }
+
+        $this->init($config);
+
+        $payment = $this->getPayment($gateway);
+        $payment = $this->packagePayment($payment);
+
+        return $payment;
     }
 }
