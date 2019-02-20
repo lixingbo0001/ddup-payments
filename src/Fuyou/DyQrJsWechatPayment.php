@@ -6,22 +6,22 @@ use Ddup\Part\Libs\Arr;
 use Ddup\Payments\Contracts\PayableInterface;
 use Ddup\Payments\Fuyou\Kernel\FuyouPay;
 
-class JsAliPayment extends FuyouPay implements PayableInterface
+class DyQrJsWechatPayment extends FuyouPay implements PayableInterface
 {
+
     function getTradeType()
     {
-        return 'FWC';
+        return 'WECHAT';
     }
 
     function endPoint()
     {
-        return 'wxPreCreate';
+        return 'preCreate';
     }
 
     function prepay($payload)
     {
-        return Arr::getIfExists($payload, self::jsField());
+        return Arr::getIfExists($payload, self::dyQrField());
     }
-
 
 }

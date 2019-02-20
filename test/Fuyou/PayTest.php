@@ -34,7 +34,7 @@ class PayTest extends PaymentTest
                     'mch_id'     => '0002900F0370542',
                     'notify_url' => 'http://test.modernmasters.com/index.php/Supplier/User/myResources.html',
                 ]
-            )->pay('jsWechat', new PayOrderStruct($param));
+            )->pay('dy_qr_js_wechat', new PayOrderStruct($param));
 
         } catch (\Exception $exception) {
             $this->assertEquals('fuyou API Error:授权码异常', $exception->getMessage());

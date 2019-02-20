@@ -25,18 +25,64 @@ abstract class FuyouPay implements PayableInterface
         $this->client = new FuyouClient($app, $config);
     }
 
-    private function setCommonParam(array $payload, PayOrderStruct $order)
+    private function baseField()
+    {
+        return [
+            "ins_cd",
+            "mchnt_cd",
+            "notify_url",
+            "version",
+            "curr_type",
+            "random_str",
+            "txn_begin_ts",
+            "term_id",
+            "term_ip",
+            'goods_des',
+            'goods_detail',
+            'goods_tag',
+            'mchnt_order_no',
+            'addn_inf',
+            'curr_type',
+            'order_amt',
+        ];
+    }
+
+    protected function dyQrField()
+    {
+        return array_merge(self::baseField(), [
+            'order_type',
+        ]);
+    }
+
+    protected function jsField()
+    {
+        return array_merge(self::baseField(), [
+            'product_id',
+            'limit_pay',
+            'trade_type',
+            'openid',
+            'sub_openid',
+            'sub_appid'
+        ]);
+    }
+
+    private function fill(array $payload, PayOrderStruct $order)
     {
         $payload = array_merge([
             "addn_inf"               => "",
-            "openid"                 => $order->get('openid'),
+            "openid"                 => $order->get('openid', ''),
             'order_type'             => $this->getTradeType(),
             'reserved_expire_minute' => $this->config->expire_minute,
             'mchnt_order_no'         => $order->order_no,
             'goods_des'              => $order->subject,
             'order_amt'              => $order->amount,
             'goods_detail'           => '',
-            'goods_tag'              => ''
+            'goods_tag'              => '',
+            'product_id'             => '',
+            'limit_pay'              => '',
+            'trade_type'             => $this->getTradeType(),
+            'sub_openid'             => '',
+            'sub_appid'              => ''
         ], $payload);
 
         return $payload;
@@ -44,7 +90,9 @@ abstract class FuyouPay implements PayableInterface
 
     public function pay(array $payload, PayOrderStruct $order):Collection
     {
-        $payload = $this->setCommonParam($payload, $order);
+        $payload = $this->fill($payload, $order);
+
+        $payload = $this->prepay($payload);
 
         $payload['sign'] = Support::sign($payload, $this->config->pem_key);
 
@@ -58,5 +106,10 @@ abstract class FuyouPay implements PayableInterface
         return '';
     }
 
+    /**
+     * @return array
+     */
     abstract function endPoint();
+
+    abstract function prepay($payload);
 }

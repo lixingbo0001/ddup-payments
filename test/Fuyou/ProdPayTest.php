@@ -34,7 +34,7 @@ class ProdPayTest extends PaymentTest
                     'mch_id'     => '0003430F1742979',
                     'notify_url' => 'http://test.modernmasters.com/index.php/Supplier/User/myResources.html',
                 ]
-            )->pay('jsWechat', new PayOrderStruct($param));
+            )->pay('dy_qr_js_wechat', new PayOrderStruct($param));
 
             $this->assertNotNull($order->qr_code, 'qr_code不为空');
 

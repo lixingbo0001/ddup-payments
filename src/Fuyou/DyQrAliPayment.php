@@ -6,7 +6,7 @@ use Ddup\Part\Libs\Arr;
 use Ddup\Payments\Contracts\PayableInterface;
 use Ddup\Payments\Fuyou\Kernel\FuyouPay;
 
-class JsAliPayment extends FuyouPay implements PayableInterface
+class DyQrAliPayment extends FuyouPay implements PayableInterface
 {
     function getTradeType()
     {
@@ -20,8 +20,7 @@ class JsAliPayment extends FuyouPay implements PayableInterface
 
     function prepay($payload)
     {
-        return Arr::getIfExists($payload, self::jsField());
+        return Arr::getIfExists($payload, self::dyQrField());
     }
-
 
 }
