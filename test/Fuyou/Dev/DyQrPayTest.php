@@ -6,7 +6,7 @@
  * Time: 下午4:37
  */
 
-namespace Ddup\Payments\Test\Fuyou;
+namespace Ddup\Payments\Test\Fuyou\Dev;
 
 use Ddup\Part\Libs\Str;
 use Ddup\Payments\Config\PayOrderStruct;
@@ -34,10 +34,10 @@ class PayTest extends PaymentTest
                     'mch_id'     => '0002900F0370542',
                     'notify_url' => 'http://test.modernmasters.com/index.php/Supplier/User/myResources.html',
                 ]
-            )->pay('dy_qr_js_wechat', new PayOrderStruct($param));
+            )->pay('dy_qr_wechat', new PayOrderStruct($param));
 
         } catch (\Exception $exception) {
-            $this->assertEquals('fuyou API Error:授权码异常', $exception->getMessage());
+            $this->assertEquals('富友通道报错：未找到路由:100001', $exception->getMessage());
         }
     }
 }
