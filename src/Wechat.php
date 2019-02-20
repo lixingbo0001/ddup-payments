@@ -6,6 +6,7 @@ use Ddup\Part\Libs\Str;
 use Ddup\Payments\Config\PaymentNotifyStruct;
 use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Config\RefundOrderStruct;
+use Ddup\Payments\Config\SdkStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Helper\Application;
@@ -71,6 +72,9 @@ class Wechat implements PaymentInterface
         $result = $this->makePay(__CLASS__, $name, $this->app, $this->config)->pay($this->payload(), $order);
 
         $order->transaction_id = $result->get('transaction_id');
+        $order->qr_code        = $result->get('qr_code');
+
+        $order->sdk = new SdkStruct($result->get('sdk_param'));
 
         return $order;
     }

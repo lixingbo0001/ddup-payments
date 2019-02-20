@@ -4,6 +4,7 @@ namespace Ddup\Payments\Wechat;
 
 use Ddup\Part\Libs\Str;
 use Ddup\Payments\Config\PayOrderStruct;
+use Ddup\Payments\Config\SdkStruct;
 use Ddup\Payments\Wechat\Kernel\WechatPay;
 use Ddup\Payments\Wechat\Kernel\Support;
 use Illuminate\Support\Collection;
@@ -17,17 +18,19 @@ class JsApiPayment extends WechatPay implements PayableInterface
 
         $prepay_id = $result->get('prepay_id');
 
-        $js_api_param = [
-            'appId'     => $this->config->app_id,
-            'timeStamp' => (string)time(),
-            'nonceStr'  => Str::rand(20),
-            'package'   => "prepay_id={$prepay_id}",
-            'signType'  => 'MD5'
-        ];
+        $sdk = new SdkStruct();
 
-        $js_api_param['paySign'] = Support::jsApiSign($js_api_param, $this->config->key);
+        $sdk->appId     = $this->config->app_id;
+        $sdk->timeStamp = (string)time();
+        $sdk->nonceStr  = Str::rand(20);
+        $sdk->package   = "prepay_id={$prepay_id}";
+        $sdk->signType  = 'MD5';
+        $sdk->paySign   = Support::jsApiSign($sdk->toArray(), $this->config->key);
 
-        return new Collection(compact('prepay_id', 'js_api_param'));
+        $result->offsetSet('sdk_param', $sdk->toArray());
+        $result->offsetSet('prepay_id', $sdk->toArray());
+
+        return $result;
     }
 
     function getTradeType()

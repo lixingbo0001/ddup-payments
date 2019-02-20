@@ -57,8 +57,8 @@ class Support
 
     public static function signString($param)
     {
-        Arr::filterCallback($param, function ($k, $v) {
-            return $k == 'sign' || strstr($k, 'reserved') || is_null($v);
+        Arr::filterCallback($param, function ($k) {
+            return $k == 'sign' || strstr($k, 'reserved');
         });
 
         $param = self::argSort($param);

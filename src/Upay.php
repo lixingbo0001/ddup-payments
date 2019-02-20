@@ -5,6 +5,7 @@ namespace Ddup\Payments;
 use Ddup\Payments\Config\PaymentNotifyStruct;
 use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Config\RefundOrderStruct;
+use Ddup\Payments\Config\SdkStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Helper\MakePaymentTrait;
@@ -97,6 +98,9 @@ class Upay implements PaymentInterface
         $result = $this->getHandle($name)->pay($this->payload(), $order);
 
         $order->transaction_id = $result->get('transaction_id');
+        $order->qr_code        = $result->get('qr_code');
+
+        $order->sdk = new SdkStruct($result->get('sdk_param'));
 
         return $order;
     }

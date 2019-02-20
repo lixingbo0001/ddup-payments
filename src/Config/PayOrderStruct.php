@@ -13,6 +13,7 @@ use Ddup\Part\Struct\StructReadable;
 
 class PayOrderStruct extends StructReadable
 {
+    public $prepay_id;
     public $amount;
     public $order_no;
     public $subject;
@@ -21,4 +22,8 @@ class PayOrderStruct extends StructReadable
     public $auth_code;
     public $transaction_id;
     public $qr_code;
+    /**
+     * @var SdkStruct
+     */
+    public $sdk;
 }

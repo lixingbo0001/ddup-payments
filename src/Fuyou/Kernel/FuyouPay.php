@@ -10,6 +10,7 @@ namespace Ddup\Payments\Fuyou\Kernel;
 
 
 use Ddup\Payments\Config\PayOrderStruct;
+use Ddup\Payments\Config\SdkStruct;
 use Ddup\Payments\Contracts\PayableInterface;
 use Ddup\Payments\Helper\Application;
 use Illuminate\Support\Collection;
@@ -23,6 +24,20 @@ abstract class FuyouPay implements PayableInterface
     {
         $this->config = new FuyouConfig($config);
         $this->client = new FuyouClient($app, $config);
+    }
+
+    /**
+     * @return array
+     */
+    abstract function endPoint();
+
+    abstract function prepay($payload);
+
+    abstract function after(Collection $result):Collection;
+
+    function getChannel()
+    {
+        return '';
     }
 
     private function baseField()
@@ -74,7 +89,7 @@ abstract class FuyouPay implements PayableInterface
             'order_type'             => $this->getTradeType(),
             'reserved_expire_minute' => $this->config->expire_minute,
             'mchnt_order_no'         => $order->order_no,
-            'goods_des'              => $order->subject,
+            'goods_des'              => iconv('UTF-8', 'GBK', $order->subject),
             'order_amt'              => $order->amount,
             'goods_detail'           => '',
             'goods_tag'              => '',
@@ -98,18 +113,24 @@ abstract class FuyouPay implements PayableInterface
 
         $this->client->requestApi($this->endPoint(), $payload);
 
-        return $this->client->result()->getData();
+        return $this->after($this->client->result()->getData());
     }
 
-    function getChannel()
+    protected function withSdk(Collection $result)
     {
-        return '';
+        $sdk = new SdkStruct();
+
+        $sdk->appId     = $result->get('sdk_appid');
+        $sdk->timeStamp = $result->get('sdk_timestamp');
+        $sdk->nonceStr  = $result->get('sdk_noncestr');
+        $sdk->package   = $result->get('sdk_package');
+        $sdk->signType  = $result->get('sdk_signtype');
+        $sdk->paySign   = $result->get('sdk_paysign');
+
+        $result->offsetSet('sdk_param', $sdk->toArray());
+
+        return $result;
     }
 
-    /**
-     * @return array
-     */
-    abstract function endPoint();
 
-    abstract function prepay($payload);
 }

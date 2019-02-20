@@ -13,14 +13,14 @@ use Ddup\Part\Libs\Str;
 use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Test\PaymentTest;
 
-class ProdPayTest extends PaymentTest
+class DyQrPayTest extends PaymentTest
 {
 
     public function test_fuyou()
     {
         $param = [
-            'total_amount' => 1,
-            'amount'       => 1,
+            'total_amount' => 0.01,
+            'amount'       => 0.01,
             'order_no'     => 1211400 . Str::rand(20, range(0, 9)),
             'subject'      => '描述',
         ];
@@ -37,6 +37,6 @@ class ProdPayTest extends PaymentTest
 
         OutCli::printLn($order->toArray());
 
-        $this->assertNotNull($order->qr_code, 'qr_code不为空');
+        $this->assertNotEmpty($order->qr_code, 'qr_code不为空');
     }
 }

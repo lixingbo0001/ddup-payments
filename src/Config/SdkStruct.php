@@ -11,11 +11,12 @@ namespace Ddup\Payments\Config;
 use Ddup\Part\Struct\StructReadable;
 
 
-class RefundOrderStruct extends StructReadable
+class SdkStruct extends StructReadable
 {
-    public $amount;
-    public $order_no;
-    public $refund_order_no;
-    public $transaction_id;
-    public $channel_refund_id;
+    public $appId;
+    public $timeStamp;
+    public $nonceStr;
+    public $package;
+    public $signType = 'MD5';
+    public $paySign;
 }

@@ -21,6 +21,9 @@ class Support
         $tmp = [];
 
         foreach ($js_api_param as $k => $v) {
+
+            if (is_null($v)) continue;
+
             $tmp[] = "{$k}={$v}";
         }
 

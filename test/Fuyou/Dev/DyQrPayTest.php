@@ -12,7 +12,7 @@ use Ddup\Part\Libs\Str;
 use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Test\PaymentTest;
 
-class PayTest extends PaymentTest
+class DyQrPayTest extends PaymentTest
 {
 
     public function test_fuyou()
