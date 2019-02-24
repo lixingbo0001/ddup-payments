@@ -36,6 +36,8 @@ class DyQrPayTest extends PaymentTest
                 ]
             )->pay('dy_qr_wechat', new PayOrderStruct($param));
 
+            $this->assertNotEmpty($result->qr_code, 'qr_code不为空');
+
         } catch (\Exception $exception) {
             $this->assertEquals('富友通道报错：未找到路由:100001', $exception->getMessage());
         }
