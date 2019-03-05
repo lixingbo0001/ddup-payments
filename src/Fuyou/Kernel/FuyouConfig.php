@@ -24,7 +24,7 @@ class FuyouConfig extends StructReadable
     public $mch_id;
     public $notify_url;
     public $expire_minute = 5;
-    public $sub_mch_id;
-    public $sub_app_id;
+    public $sub_mch_id    = '';
+    public $sub_app_id    = '';
     public $version       = '1';
 }

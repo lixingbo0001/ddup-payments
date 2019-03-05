@@ -96,8 +96,8 @@ abstract class FuyouPay implements PayableInterface
             'product_id'             => '',
             'limit_pay'              => '',
             'trade_type'             => $this->getTradeType(),
-            'sub_openid'             => '',
-            'sub_appid'              => ''
+            'sub_openid'             => $order->get('openid', ''),
+            'sub_appid'              => $this->config->sub_app_id
         ], $payload);
 
         return $payload;
