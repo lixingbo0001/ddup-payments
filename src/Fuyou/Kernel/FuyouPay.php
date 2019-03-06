@@ -89,7 +89,7 @@ abstract class FuyouPay implements PayableInterface
             'order_type'             => $this->getTradeType(),
             'reserved_expire_minute' => $this->config->expire_minute,
             'mchnt_order_no'         => $order->order_no,
-            'goods_des'              => iconv('UTF-8', 'GBK', $order->subject),
+            'goods_des'              => $order->subject,
             'order_amt'              => $order->amount,
             'goods_detail'           => '',
             'goods_tag'              => '',
@@ -108,8 +108,6 @@ abstract class FuyouPay implements PayableInterface
         $payload = $this->fill($payload, $order);
 
         $payload = $this->prepay($payload);
-
-        $payload['sign'] = Support::sign($payload, $this->config->pem_key);
 
         $this->client->requestApi($this->endPoint(), $payload);
 

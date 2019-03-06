@@ -73,6 +73,17 @@ class Support
         return self::encode($string, $pem_path);
     }
 
+    public static function charsetGbk(&$params)
+    {
+        foreach ($params as &$str) {
+            if (!is_string($str)) continue;
+
+            if (preg_match('/[\x{4e00}-\x{9fa5}]/u', $str) > 0) {
+                $str = iconv('UTF-8', 'GBK', $str);
+            }
+        }
+    }
+
     public static function toXml($data)
     {
         $xml_content = new MsgToXml(new MsgFromArray($data));

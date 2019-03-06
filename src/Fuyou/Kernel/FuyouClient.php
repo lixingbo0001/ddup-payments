@@ -57,9 +57,13 @@ class FuyouClient
 
     public function requestApi($endpoint, $parmas)
     {
-        $xml = Support::toXml($parmas);
-
         $this->app->logger->debug('请求富友原始数据', $parmas);
+
+        Support::charsetGbk($parmas);
+
+        $parmas['sign'] = Support::sign($parmas, $this->config->pem_key);
+
+        $xml = Support::toXml($parmas);
 
         $ret = $this->post($endpoint, 'req=' . Support::bodyEncode($xml));
 
