@@ -85,7 +85,7 @@ abstract class FuyouPay implements PayableInterface
     {
         $payload = array_merge([
             "addn_inf"               => "",
-            "openid"                 => $order->get('openid', ''),
+            "openid"                 => '',
             'order_type'             => $this->getTradeType(),
             'reserved_expire_minute' => $this->config->expire_minute,
             'mchnt_order_no'         => $order->order_no,
