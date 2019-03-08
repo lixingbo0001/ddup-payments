@@ -10,7 +10,7 @@ use Ddup\Payments\Wechat\Kernel\Support;
 use Illuminate\Support\Collection;
 use Ddup\Payments\Contracts\PayableInterface;
 
-class JsApiPayment extends WechatPay implements PayableInterface
+class JsWechatPayment extends WechatPay implements PayableInterface
 {
     function pay(array $payload, PayOrderStruct $order):Collection
     {
