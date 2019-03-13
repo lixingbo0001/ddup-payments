@@ -19,6 +19,7 @@ class FuyouStructTransform implements TransformAble
     function transform(StructReadable &$struct, Collection $data)
     {
         if ($struct instanceof PaymentNotifyStruct) {
+            $struct->total_amount   = $data->get('order_amt');
             $struct->amount         = $data->get('order_amt');
             $struct->transaction_id = $data->get('transaction_id');
 
