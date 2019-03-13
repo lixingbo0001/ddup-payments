@@ -11,6 +11,7 @@ use Ddup\Payments\Config\SdkStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
 use Ddup\Payments\Fuyou\Kernel\FuyouConfig;
+use Ddup\Payments\Fuyou\Kernel\FuyouStructTransform;
 use Ddup\Payments\Helper\MakePaymentTrait;
 use Ddup\Payments\Helper\Application;
 use Illuminate\Http\Request;
@@ -85,7 +86,7 @@ class Fuyou implements PaymentInterface
         $req = Request::createFromGlobals()->input('req');
 
         if (!$req) {
-            throw  new PayApiException("富友通道异步通知出错:没返回数据", PayApiException::api_error);
+            throw  new PayApiException("富友异步通知:没返回数据", PayApiException::api_error);
         }
 
         $xml = urldecode($req);
@@ -97,6 +98,6 @@ class Fuyou implements PaymentInterface
 
     public function callbackConversion($data):PaymentNotifyStruct
     {
-        return new PaymentNotifyStruct($data);
+        return new PaymentNotifyStruct($data, new FuyouStructTransform());
     }
 }

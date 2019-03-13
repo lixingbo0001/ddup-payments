@@ -19,38 +19,29 @@ class FuyouStructTransform implements TransformAble
     function transform(StructReadable &$struct, Collection $data)
     {
         if ($struct instanceof PaymentNotifyStruct) {
-            $struct->total_amount   = $data->get('order_amt');
             $struct->amount         = $data->get('order_amt');
             $struct->transaction_id = $data->get('transaction_id');
 
-            switch ($data->get('trans_stat')) {
-                case 'SUCCESS':
+            switch ($data->get('result_code')) {
+                case '000000':
                     $struct->status     = PaymentNotifyStruct::success;
                     $struct->status_msg = '支付成功';
                     break;
-                case 'REFUND':
+                case '030011':
                     $struct->status     = PaymentNotifyStruct::refund;
-                    $struct->status_msg = '转入退款';
+                    $struct->status_msg = '已经退款';
                     break;
-                case 'NOTPAY':
-                    $struct->status     = PaymentNotifyStruct::pending;
-                    $struct->status_msg = '待支付';
+                case '030006':
+                    $struct->status     = PaymentNotifyStruct::cacel;
+                    $struct->status_msg = '已取消';
                     break;
-                case 'CLOSED':
+                case '030007':
                     $struct->status     = PaymentNotifyStruct::fail;
                     $struct->status_msg = '已关闭';
                     break;
-                case 'REVOKED':
-                    $struct->status     = PaymentNotifyStruct::fail;
-                    $struct->status_msg = '已撤销';
-                    break;
-                case 'USERPAYING':
+                case '030010':
                     $struct->status     = PaymentNotifyStruct::pending;
                     $struct->status_msg = '支付中';
-                    break;
-                case 'PAYERROR':
-                    $struct->status     = PaymentNotifyStruct::fail;
-                    $struct->status_msg = '其他原因支付失败';
                     break;
             }
         }
