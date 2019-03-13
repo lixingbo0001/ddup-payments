@@ -65,6 +65,8 @@ class FuyouClient
 
         $xml = Support::toXml($parmas);
 
+        $this->app->logger->info($xml);
+
         $ret = $this->post($endpoint, 'req=' . Support::bodyEncode($xml));
 
         $ret = Support::bodyDecode($ret);

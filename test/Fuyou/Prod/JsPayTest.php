@@ -57,8 +57,8 @@ class JsPayTest extends PaymentTest
                 [
                     'mode'       => 'PROD',
                     'pem_key'    => self::pem_key_prod,
-                    'app_id'     => '08M0026086',
-                    'mch_id'     => '0003430F1742979',
+                    'app_id'     => '08M0026244',
+                    'mch_id'     => '0003430F2164030',
                     'notify_url' => 'http://test.modernmasters.com/index.php/Supplier/User/myResources.html',
                 ]
             )->pay('js_ali', new PayOrderStruct($param));

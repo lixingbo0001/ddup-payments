@@ -3,6 +3,7 @@
 namespace Ddup\Payments;
 
 use Ddup\Part\Libs\Str;
+use Ddup\Part\Message\MsgFromXml;
 use Ddup\Payments\Config\PaymentNotifyStruct;
 use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Config\RefundOrderStruct;
@@ -81,13 +82,17 @@ class Fuyou implements PaymentInterface
 
     public function verify():Collection
     {
-        $data = Request::createFromGlobals()->all();
+        $req = Request::createFromGlobals()->input('req');
 
-        if (!$data) {
+        if (!$req) {
             throw  new PayApiException("富友通道异步通知出错:没返回数据", PayApiException::api_error);
         }
 
-        return new Collection($data);
+        $xml = urldecode($req);
+
+        $result = new MsgFromXml($xml);
+
+        return new Collection($result->toArray());
     }
 
     public function callbackConversion($data):PaymentNotifyStruct
