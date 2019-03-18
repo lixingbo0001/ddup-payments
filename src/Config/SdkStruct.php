@@ -19,5 +19,5 @@ class SdkStruct extends StructReadable
     public $package;
     public $signType = 'MD5';
     public $paySign;
-    public $ransaction_id;
+    public $transaction_id;
 }
