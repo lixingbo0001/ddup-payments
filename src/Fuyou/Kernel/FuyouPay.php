@@ -118,12 +118,13 @@ abstract class FuyouPay implements PayableInterface
     {
         $sdk = new SdkStruct();
 
-        $sdk->appId     = $result->get('sdk_appid');
-        $sdk->timeStamp = $result->get('sdk_timestamp');
-        $sdk->nonceStr  = $result->get('sdk_noncestr');
-        $sdk->package   = $result->get('sdk_package');
-        $sdk->signType  = $result->get('sdk_signtype');
-        $sdk->paySign   = $result->get('sdk_paysign');
+        $sdk->appId         = $result->get('sdk_appid');
+        $sdk->timeStamp     = $result->get('sdk_timestamp');
+        $sdk->nonceStr      = $result->get('sdk_noncestr');
+        $sdk->package       = $result->get('sdk_package');
+        $sdk->signType      = $result->get('sdk_signtype');
+        $sdk->paySign       = $result->get('sdk_paysign');
+        $sdk->ransaction_id = $result->get('reserved_transaction_id');
 
         $result->offsetSet('sdk_param', $sdk->toArray());
 
