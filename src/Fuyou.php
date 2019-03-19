@@ -10,6 +10,7 @@ use Ddup\Payments\Config\RefundOrderStruct;
 use Ddup\Payments\Config\SdkStruct;
 use Ddup\Payments\Contracts\PaymentInterface;
 use Ddup\Payments\Exceptions\PayApiException;
+use Ddup\Payments\Fuyou\Kernel\FuyouClient;
 use Ddup\Payments\Fuyou\Kernel\FuyouConfig;
 use Ddup\Payments\Fuyou\Kernel\FuyouStructTransform;
 use Ddup\Payments\Helper\MakePaymentTrait;
@@ -73,6 +74,42 @@ class Fuyou implements PaymentInterface
 
     public function refund($name, RefundOrderStruct $order):RefundOrderStruct
     {
+        $result     = $this->makePay(__CLASS__, $name, $this->app, $this->config);
+        $client     = new FuyouClient($this->app, $this->config);
+        $order_type = [
+            'FWC'    => 'ALIPAY',
+            'WECHAT' => 'WECHAT',
+            'JSAPI'  => 'WECHAT'
+        ];
+
+        $payload = $this->payload();
+
+        array_forget($payload, [
+            'notify_url',
+            'curr_type',
+            'term_ip',
+            'txn_begin_ts'
+        ]);
+
+        $post = array_merge($payload, [
+            'operator_id'         => '',
+            'reserved_fy_term_id' => '',
+            'refund_order_no'     => $order->refund_no,
+            'total_amt'           => $order->amount,
+            'refund_amt'          => $order->refund_amount,
+            'mchnt_order_no'      => $order->order_no,
+            'order_type'          => array_get($order_type, $result->getTradeType())
+        ]);
+
+        $result = $client->requestApi('commonRefund', $post);
+
+        if (!$client->result()->isSuccess()) {
+            throw  new PayApiException("退款失败:" . $client->result()->getMsg(), PayApiException::api_error);
+        }
+
+        $order->transaction_id    = $result->get('transaction_id');
+        $order->channel_refund_id = $result->get('refund_id');
+
         return $order;
     }
 

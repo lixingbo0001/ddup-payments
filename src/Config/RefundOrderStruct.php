@@ -14,8 +14,9 @@ use Ddup\Part\Struct\StructReadable;
 class RefundOrderStruct extends StructReadable
 {
     public $amount;
+    public $refund_amount;
     public $order_no;
-    public $refund_order_no;
+    public $refund_no;
     public $transaction_id;
     public $channel_refund_id;
 }

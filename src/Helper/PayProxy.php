@@ -74,11 +74,13 @@ class PayProxy implements PaymentProxyAble
 
     public function refund($name, RefundOrderStruct $order):RefundOrderStruct
     {
-        $order->amount = $this->moneyBefore($order->amount);
+        $order->amount        = $this->moneyBefore($order->amount);
+        $order->refund_amount = $this->moneyBefore($order->refund_amount);
 
         $result = $this->api->refund($name, $order);
 
-        $result->amount = $this->moneyAfter($result->amount);
+        $result->amount        = $this->moneyAfter($result->amount);
+        $result->refund_amount = $this->moneyAfter($result->refund_amount);
 
         return $result;
     }
