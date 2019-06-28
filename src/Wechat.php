@@ -34,7 +34,7 @@ class Wechat implements PaymentInterface
 
     public function isYuan()
     {
-        return true;
+        return false;
     }
 
     private function payload()
@@ -73,6 +73,7 @@ class Wechat implements PaymentInterface
 
         $order->transaction_id = $result->get('transaction_id');
         $order->qr_code        = $result->get('qr_code');
+        $order->prepay_id  = $result->get('prepay_id');
 
         $order->sdk = new SdkStruct($result->get('sdk_param'));
 

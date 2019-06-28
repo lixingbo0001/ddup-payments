@@ -18,7 +18,7 @@ class MinipayPayment extends WechatPay implements PayableInterface
 
         $prepay_id = $result->get('prepay_id');
 
-        $js_api_param = [
+        $sdk_param = [
             'appId'     => $this->config->app_id,
             'timeStamp' => (string)time(),
             'nonceStr'  => Str::rand(20),
@@ -26,9 +26,9 @@ class MinipayPayment extends WechatPay implements PayableInterface
             'signType'  => 'MD5'
         ];
 
-        $js_api_param['paySign'] = Support::jsApiSign($js_api_param, $this->config->key);
+        $sdk_param['paySign'] = Support::jsApiSign($sdk_param, $this->config->key);
 
-        return new Collection(compact('prepay_id', 'js_api_param'));
+        return new Collection(compact('prepay_id', 'sdk_param'));
     }
 
     function getTradeType()
