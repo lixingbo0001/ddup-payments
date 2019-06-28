@@ -21,6 +21,7 @@ class WechatStructTransform implements TransformAble
         if ($struct instanceof PaymentNotifyStruct) {
             $struct->status         = $data->get('result_code');
             $struct->amount         = $data->get('total_fee');
+            $struct->total_amount   = $data->get('total_fee');
             $struct->transaction_id = $data->get('transaction_id');
         }
     }
