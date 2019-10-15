@@ -18,7 +18,9 @@ class UpayStructTransform implements TransformAble
 {
     function transform(StructReadable &$struct, Collection $data)
     {
-        $data = new Collection($data->get('billPayment'));
+        $billPayment = $data->get('billPayment');
+        $billPayment = is_string($billPayment) ? json_decode($data->get('billPayment')) : $billPayment;
+        $data        = new Collection($billPayment);
 
         if ($struct instanceof PaymentNotifyStruct) {
 

@@ -61,7 +61,7 @@ abstract class UpayPay implements PayableInterface
             $payload['platformAmount'] = $order->separate_account;
             $payload['subOrders']      = [
                 'mid'         => $this->config->get('mch_id'),
-                'totalAmount' => Float_::reduce($order->amount, $order->separate_account),
+                'totalAmount' => $order->amount - $order->separate_account,
             ];
         }
 

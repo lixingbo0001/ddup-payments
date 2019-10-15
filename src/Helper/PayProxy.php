@@ -63,11 +63,13 @@ class PayProxy implements PaymentProxyAble
 
     public function pay($gateway, PayOrderStruct $order):PayOrderStruct
     {
-        $order->amount = $this->moneyBefore($order->amount);
+        $order->amount           = $this->moneyBefore($order->amount);
+        $order->separate_account = $this->moneyBefore($order->separate_account);
 
         $result = $this->api->pay($gateway, $order);
 
-        $result->amount = $this->moneyAfter($result->amount);
+        $result->amount           = $this->moneyAfter($result->amount);
+        $result->separate_account = $this->moneyAfter($result->separate_account);
 
         return $result;
     }
