@@ -18,6 +18,7 @@ use Psr\Log\LoggerInterface;
  * @property LoggerInterface $logger;
  * @property PaymentInterface wechat;
  * @property PaymentInterface upay;
+ * @property PaymentInterface upay2;
  * @property PaymentInterface fuyou;
  * @property PaymentProxyAble proxy;
  */

@@ -13,6 +13,7 @@ use Ddup\Payments\Fuyou;
 use Ddup\Payments\Helper\Application;
 use Ddup\Payments\Helper\PayProxy;
 use Ddup\Payments\Upay;
+use Ddup\Payments\Upay2;
 use Ddup\Payments\Wechat;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -45,6 +46,10 @@ class ChannelProvider implements ServiceProviderInterface
 
         $pimple->upay = function () use ($pimple) {
             return new Upay($pimple);
+        };
+
+        $pimple->upay2 = function () use ($pimple) {
+            return new Upay2($pimple);
         };
 
         $pimple->fuyou = function () use ($pimple) {

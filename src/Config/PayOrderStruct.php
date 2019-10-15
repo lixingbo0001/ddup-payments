@@ -22,6 +22,7 @@ class PayOrderStruct extends StructReadable
     public $auth_code;
     public $transaction_id;
     public $qr_code;
+    public $separate_account;
     /**
      * @var SdkStruct
      */
