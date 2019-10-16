@@ -42,7 +42,7 @@ class UpayStructTransform implements TransformAble
                     $struct->status_msg = '交易已关闭';
                     break;
                 case "TRADE_REFUND":
-                    $struct->status     = PaymentNotifyStruct::cacel;
+                    $struct->status     = PaymentNotifyStruct::refund;
                     $struct->status_msg = '已退款';
                     break;
                 case "UNKNOWN":

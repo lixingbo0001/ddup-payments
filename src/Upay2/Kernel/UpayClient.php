@@ -50,6 +50,7 @@ class UpayClient
 
     public function requestApi($endpoint, $data):Collection
     {
+
         $ret = $this->json($endpoint, $data);
 
         $this->parseResult($ret);

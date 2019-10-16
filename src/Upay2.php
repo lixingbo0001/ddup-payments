@@ -84,17 +84,26 @@ class Upay2 implements PaymentInterface
 
     public function refund($name, RefundOrderStruct $order):RefundOrderStruct
     {
-        $params                   = $this->payload();
+        $instance = $this->makePay(__CLASS__, $name, $this->app, $this->config);
+
+        $params = $this->payload();
+
+        $params['msgType']        = 'bills.refund';
+        $params['msgSrc']         = Support::msgSrc($this->config);
+        $params['instMid']        = $instance->getTradeType();
         $params['billDate']       = $order->get('created_at');
         $params['billNo']         = $order->order_no;
-        $params['instMid']        = 'QRPAYDEFAULT';
+        $params['refundOrderId']  = $order->refund_no;
         $params['refundAmount']   = $order->refund_amount;
         $params['platformAmount'] = $order->get('platform_amount', 0);
 
-        $params = Support::paraFilter($params);
+        $params         = Support::paraFilter($params);
+        $params['sign'] = Support::generateSign($params, $this->config->key);
+
         $result = $this->getClient()->requestApi('', $params);
 
-        $order->transaction_id = $result->get('refundOrderId');
+        $order->transaction_id    = $result->get('refundOrderId', '');
+        $order->channel_refund_id = $result->get('refundTargetOrderId', '');
 
         return $order;
     }

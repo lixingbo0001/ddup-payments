@@ -15,12 +15,12 @@ class JsWechatPayment extends UpayPay implements PayableInterface
         return $this->payRequest($payload, $order);
     }
 
-    public function msgType()
+    public function actionType()
     {
         return 'bills.getQRCode';
     }
 
-    public function instMid()
+    public function getTradeType()
     {
         return 'QRPAYDEFAULT';
     }
