@@ -4,6 +4,7 @@ namespace Ddup\Payments\Upay2\Kernel;
 
 
 use Ddup\Payments\Exceptions\PayPaymentException;
+use function GuzzleHttp\Psr7\str;
 
 class Support
 {
@@ -34,10 +35,13 @@ class Support
             throw new PayPaymentException('Missing Upay2 Config -- [key]', PayPaymentException::miss_key);
         }
 
-        $string = md5(self::getSignContent($payload) . $key);
-        $string = strtoupper($string);
+        $string = self::getSignContent($payload) . $key;
+        $encode = md5($string);
+        $final  = strtoupper($encode);
 
-        return $string;
+        dump($string);
+
+        return $final;
     }
 
     public static function getSignContent($payload)
@@ -82,6 +86,8 @@ class Support
             if ($k == 'sign') continue;
 
             $v = is_array($v) ? json_encode($v, JSON_UNESCAPED_UNICODE) : $v;
+
+            $v = is_bool($v) ? ($v ? 'true' : 'false') : $v;
 
             $param[] = $k . "=" . $v;
         }

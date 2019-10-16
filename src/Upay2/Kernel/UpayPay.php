@@ -53,8 +53,10 @@ abstract class UpayPay implements PayableInterface
             $payload['divisionFlag']   = true;
             $payload['platformAmount'] = $order->separate_account;
             $payload['subOrders']      = [
-                'mid'         => $this->config->get('mch_id'),
-                'totalAmount' => $order->amount - $order->separate_account,
+                [
+                    'mid'         => $this->config->get('sub_merchant_id'),
+                    'totalAmount' => $order->amount - $order->separate_account,
+                ]
             ];
         }
 
