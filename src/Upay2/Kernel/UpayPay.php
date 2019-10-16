@@ -5,6 +5,7 @@ namespace Ddup\Payments\Upay2\Kernel;
 use Ddup\Part\Libs\Float_;
 use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Contracts\PayableInterface;
+use Ddup\Payments\Exceptions\PayPaymentException;
 use Ddup\Payments\Helper\Application;
 use Illuminate\Support\Collection;
 
@@ -49,16 +50,20 @@ abstract class UpayPay implements PayableInterface
         }
 
         //分账标记
-        if ($order->separate_account > 0) {
-            $payload['divisionFlag']   = true;
-            $payload['platformAmount'] = $order->separate_account;
-            $payload['subOrders']      = [
-                [
-                    'mid'         => $this->config->get('sub_merchant_id'),
-                    'totalAmount' => $order->amount - $order->separate_account,
-                ]
-            ];
+        $payload['divisionFlag']   = true;
+        $payload['platformAmount'] = 0;
+        $sub_merchant_id           = $this->config->get('sub_merchant_id');
+
+        if (!$sub_merchant_id) {
+            throw new PayPaymentException("富友分账配置缺少子商户号");
         }
+
+        $payload['subOrders'] = [
+            [
+                'mid'         => $sub_merchant_id,
+                'totalAmount' => $order->amount,
+            ]
+        ];
 
         $payload = Support::paraFilter($payload);
 
