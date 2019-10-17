@@ -39,8 +39,6 @@ class Support
         $encode = md5($string);
         $final  = strtoupper($encode);
 
-        dump($string);
-
         return $final;
     }
 

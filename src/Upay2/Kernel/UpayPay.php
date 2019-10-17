@@ -2,7 +2,6 @@
 
 namespace Ddup\Payments\Upay2\Kernel;
 
-use Ddup\Part\Libs\Float_;
 use Ddup\Payments\Config\PayOrderStruct;
 use Ddup\Payments\Contracts\PayableInterface;
 use Ddup\Payments\Exceptions\PayPaymentException;
