@@ -36,7 +36,6 @@ abstract class UpayPay implements PayableInterface
     public function payRequest(array $payload, PayOrderStruct $order):Collection
     {
         $payload['msgType']     = $this->actionType();
-        $payload['msgSrc']      = Support::msgSrc($this->config);
         $payload['instMid']     = $this->getTradeType();
         $payload['billNo']      = $order->order_no;
         $payload['billDate']    = $order->get('created_at');

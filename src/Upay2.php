@@ -44,7 +44,7 @@ class Upay2 implements PaymentInterface
         //如果sign_type="md5"的时候不传，否则会报签名错误
 
         return [
-            'msgSrc'           => $this->config->msg_src,
+            'msgSrc'           => Support::msgSrc($this->config),
             'mid'              => $this->config->merchant_id,
             'tid'              => $this->config->terminal_id,
             'requestTimestamp' => Time::date(),
@@ -89,7 +89,6 @@ class Upay2 implements PaymentInterface
         $params = $this->payload();
 
         $params['msgType']       = 'bills.refund';
-        $params['msgSrc']        = Support::msgSrc($this->config);
         $params['instMid']       = $instance->getTradeType();
         $params['billDate']      = $order->get('created_at');
         $params['billNo']        = $order->order_no;

@@ -21,11 +21,15 @@ class Support
 
     public static function msgSrc(UpayConfig $config)
     {
+        if ($config->msg_src) {
+            return $config->msg_src;
+        }
+
         switch ($config->mode) {
             case $config::MODE_TEST:
                 return 'WWW.TEST.COM';
             default:
-                return '';
+                return 'WWW.LSQYWLKJ.COM';
         }
     }
 
