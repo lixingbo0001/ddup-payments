@@ -88,14 +88,13 @@ class Upay2 implements PaymentInterface
 
         $params = $this->payload();
 
-        $params['msgType']        = 'bills.refund';
-        $params['msgSrc']         = Support::msgSrc($this->config);
-        $params['instMid']        = $instance->getTradeType();
-        $params['billDate']       = $order->get('created_at');
-        $params['billNo']         = $order->order_no;
-        $params['refundOrderId']  = $order->refund_no;
-        $params['refundAmount']   = $order->refund_amount;
-        $params['platformAmount'] = $order->get('platform_amount', 0);
+        $params['msgType']       = 'bills.refund';
+        $params['msgSrc']        = Support::msgSrc($this->config);
+        $params['instMid']       = $instance->getTradeType();
+        $params['billDate']      = $order->get('created_at');
+        $params['billNo']        = $order->order_no;
+        $params['refundOrderId'] = $order->refund_no;
+        $params['refundAmount']  = $order->refund_amount;
 
         $params         = Support::paraFilter($params);
         $params['sign'] = Support::generateSign($params, $this->config->key);
