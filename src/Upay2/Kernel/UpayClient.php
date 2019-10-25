@@ -23,7 +23,7 @@ class UpayClient
         $this->app    = $app;
         $this->config = $config;
 
-        $this->timeout = 3;
+        $this->timeout = 8;
 
         $app->registerRequestMiddleware($this);
     }
